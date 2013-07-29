@@ -1,0 +1,14 @@
+<use name="FWCore/Framework"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="clhep"/>
+<use name="PhysicsTools/UtilAlgos"/>
+<use name="CondFormats/PhysicsToolsObjects"/>
+<use name="DataFormats/Candidate"/>
+<use name="DataFormats/Common"/>
+<use name="HLTrigger/HLTcore"/>
+<use name="DataFormats/HLTReco"/>
+<flags EDM_PLUGIN="1"/>
+<export>
+   <lib name="1"/>
+</export>
