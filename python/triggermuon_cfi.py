@@ -18,12 +18,12 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.source = cms.Source(
                             "PoolSource",
-                            fileNames = cms.untracked.vstring(
-                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
-                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_2.root',
-                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_3.root',
-                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_4.root',
-                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_5.root',
+                            fileNames = cms.untracked.vstring('file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/dataFile_runA/theFile.root'
+#                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
+ #                                                             'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_2.root',
+  #                                                            'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_3.root',
+   #                                                           'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_4.root',
+    #                                                          'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_5.root',
                                                               ),
                             secondaryFileNames = cms.untracked.vstring(),
                             noEventSort = cms.untracked.bool(True),
@@ -39,4 +39,29 @@ process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
                                      outputFile		        = cms.string("muonTriggerTree.root"),
 )
 
-process.p = cms.Path(process.triggerMuon)
+process.goodVertexFilter = cms.EDFilter("VertexSelector",
+                                        src = cms.InputTag("offlinePrimaryVertices"),
+                                        cut = cms.string("!isFake && ndof > 4 && abs(z) <= 25 && position.Rho <= 2"),
+                                        filter = cms.bool(True),
+                                        )
+process.noScraping = cms.EDFilter("FilterOutScraping",
+                                  applyfilter = cms.untracked.bool(True),
+                                  debugOn = cms.untracked.bool(False), ## Or 'True' to get some per-event info
+                                  numtrack = cms.untracked.uint32(10),
+                                  thresh = cms.untracked.double(0.25)
+                                  )
+
+
+process.load("HLTrigger.HLTfilters.triggerResultsFilter_cfi")
+
+process.triggerResultsFilter.triggerConditions = cms.vstring( 'HLT_Mu17_Mu8_v*','HLT_Mu17_TkMu8_v*','HLT_Mu17_v*','HLT_Mu24_eta2p1_v*')
+process.triggerResultsFilter.l1tResults = ''
+process.triggerResultsFilter.throw = False
+process.triggerResultsFilter.hltResults = cms.InputTag( "TriggerResults", "", "HLT" )
+
+process.p = cms.Path(process.triggerResultsFilter+process.goodVertexFilter + process.noScraping+process.triggerMuon)
+
+
+
+
+

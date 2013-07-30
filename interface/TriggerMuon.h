@@ -132,29 +132,7 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<bool> *T_Muon_IsTrackerMuon;
     std::vector<bool> *T_Muon_IsPFMuon;
     std::vector<bool> *T_Muon_IsCaloMuon;
-    std::vector<bool> *T_Muon_IsStandAloneMuon;
-    std::vector<bool> *T_Muon_IsMuon;
-    std::vector<bool> *T_Muon_IsGlobalMuon_PromptTight;
-    std::vector<bool> *T_Muon_IsTrackerMuonArbitrated;
-    std::vector<int>  *T_Muon_numberOfChambers;
-    std::vector<int>  *T_Muon_numberOfChambersRPC;
-    std::vector<int>  *T_Muon_numberOfMatches;
-    std::vector<int>  *T_Muon_numberOfMatchedStations;
-    std::vector<int>  *T_Muon_charge;
-    
-    
-    std::vector<bool> *T_Muon_TMLastStationTight;
-    std::vector<float> *T_Muon_globalTrackChi2;
-    std::vector<int>  *T_Muon_validMuonHits;
-    std::vector<float> *T_Muon_trkKink;
-    std::vector<int>  *T_Muon_trkNbOfTrackerLayers;
-    std::vector<int>  *T_Muon_trkNbOfValidTrackeHits;
-    std::vector<int>  *T_Muon_trkValidPixelHits;
-    std::vector<float> *T_Muon_trkError;
-    std::vector<float> *T_Muon_dB;
-    std::vector<float> *T_Muon_dzPV;
-    std::vector<float> *T_Muon_dBstop;
-    std::vector<float> *T_Muon_dzstop;
+
     
     // PF isolation
     std::vector<float> *T_Muon_chargedHadronIsoR04;
@@ -167,25 +145,15 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<float> *T_Muon_photonIsoR03;
     std::vector<float> *T_Muon_chargedHadronIsoPUR03;
     
-    std::vector<float> *T_Muon_isoR03_emEt;
-    std::vector<float> *T_Muon_isoR03_hadEt;
-    std::vector<float> *T_Muon_isoR03_hoEt;
-    std::vector<float> *T_Muon_isoR03_sumPt;
-    std::vector<int> *T_Muon_isoR03_nTracks;
-    std::vector<int> *T_Muon_isoR03_nJets;
-    std::vector<float> *T_Muon_isoRingsMVA;
+
+    // trigger object
+    std::vector<float> *T_TrigObj_Pt;
+    std::vector<float> *T_TrigObj_Eta;
+    std::vector<float> *T_TrigObj_Phi;
+    std::vector<int> *T_TrigObj_FilterIndex;
     
-    //trigger matching
-    std::vector<int> *T_Muon_HLT_Mu17_TkMu8_Mu17Leg;
-    std::vector<int> *T_Muon_HLT_Mu17_TkMu8_Mu8Leg;
-    std::vector<int> *T_Muon_HLT_Mu17_Mu8_Mu17Leg;
-    std::vector<int> *T_Muon_HLT_Mu17_Mu8_Mu8Leg;
-    std::vector<int> *T_Muon_HLT_Mu17_obj;
-    std::vector<int> *T_Muon_HLT_Mu8_obj;
-    std::vector<int> *T_Muon_HLT_Mu8_Ele17_Mu8Leg;
-    std::vector<int> *T_Muon_HLT_Ele8_Mu17_Mu17Leg;
-    std::vector<int> *T_Muon_HLT_IsoMu24;
-    std::vector<int> *T_Muon_HLT_IsoMu24_2p1;
+    
+    
     
     
     // root file to store histograms
