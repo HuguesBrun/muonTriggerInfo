@@ -115,6 +115,8 @@ class TriggerMuon : public edm::EDAnalyzer {
     int T_Event_HLT_Ele8_Mu17;
     int T_Event_HLT_IsoMu24;
     int T_Event_HLT_IsoMu24_2p1;
+    int T_Event_HLT_Mu17_TkMu8_NoDZ;
+    int T_Event_HLT_Mu13_Mu8_NoDZ;
     
     
     //muons infos
@@ -154,7 +156,7 @@ class TriggerMuon : public edm::EDAnalyzer {
     
     
     
-    
+    bool inRunD_;
     
     // root file to store histograms
     TFile*  rootFile_;

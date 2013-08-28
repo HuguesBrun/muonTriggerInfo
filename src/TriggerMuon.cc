@@ -18,8 +18,9 @@ TriggerMuon::TriggerMuon(const edm::ParameterSet& iConfig)
     HLT_name.push_back("HLT_Mu17_Mu8_v");//1
     HLT_name.push_back("HLT_Mu17_v");//2
     HLT_name.push_back("HLT_Mu8_v");//3
-   // HLT_name.push_back("HLT_IsoMu24_v");//4
-    HLT_name.push_back("HLT_IsoMu24_eta2p1_v");//5
+    HLT_name.push_back("HLT_IsoMu24_eta2p1_v");//4
+    HLT_name.push_back("HLT_Mu17_TkMu8_NoDZ_v");//5
+    HLT_name.push_back("HLT_Mu13_Mu8_NoDZ_v");//6
     
     
     HLT_triggerObjects.push_back("hltL3fL1DoubleMu10MuOpenL1f0L2f10L3Filtered17");// 0 -> DoubleMu17Mu8_Mu17
@@ -32,7 +33,10 @@ TriggerMuon::TriggerMuon(const edm::ParameterSet& iConfig)
     HLT_triggerObjects.push_back("hltL3crIsoL1sMu16L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15");// 7 -> IsoMu24
     HLT_triggerObjects.push_back("hltL3fL1sMu12L3Filtered17");// 8 -> Mu17
     HLT_triggerObjects.push_back("hltL3fL1sMu3L3Filtered8");// 9 -> Mu8
-
+    HLT_triggerObjects.push_back("hltL3fL1DoubleMu10MuOpenOR3p5L1f0L2f10L3Filtered13");// 10 -> Mu13_Mu8_NoDZ_leg13
+    
+    // initialize the in runD
+    inRunD_ = false;
     
 
     
@@ -91,6 +95,10 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     cout << j << " = " << hltConfig.triggerNames()[j] << endl;
                     theBitCorr.push_back(j);
                 }
+                if (TString(hltConfig.triggerNames()[j]).Contains(HLT_name[5])){
+                    cout << "on est content car on est bien dans le run D !!!" << endl;
+                    inRunD_ = true;
+                }
             }
         }
         for (unsigned int j=0; j<HLT_triggerObjects.size(); j++)
@@ -105,7 +113,12 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     T_Event_HLT_Mu8 =         triggerResults->accept(theBitCorr[3]);
   //  T_Event_HLT_IsoMu24 =         triggerResults->accept(theBitCorr[4]);
     T_Event_HLT_IsoMu24_2p1 =         triggerResults->accept(theBitCorr[4]);
-    
+    //cout << "inRunD_" << inRunD_ << endl;
+    //cout << "theBitCorr" << theBitCorr.size() << endl;
+    if (inRunD_){
+        T_Event_HLT_Mu17_TkMu8_NoDZ =         triggerResults->accept(theBitCorr[5]);
+        T_Event_HLT_Mu13_Mu8_NoDZ =         triggerResults->accept(theBitCorr[6]);
+    }
     /// fill the in selected Objet the HLT filter we will use for the matching
     trigger::TriggerObjectCollection allTriggerObjects = triggerSummary->getObjects();
     trigger::TriggerObjectCollection selectedObjects;
@@ -126,7 +139,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
     }
     
-    
+    //cout << "taille corrHLT = " << theHLTcorr.size() << endl;
     //fill event variables : 
     T_Event_RunNumber = iEvent.id().run();
     T_Event_EventNumber = iEvent.id().event();
@@ -226,6 +239,8 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Event_HLT_Mu8",&T_Event_HLT_Mu8,"T_Event_HLT_Mu8/I");
     mytree_->Branch("T_Event_HLT_IsoMu24",&T_Event_HLT_IsoMu24,"T_Event_HLT_IsoMu24/I");
     mytree_->Branch("T_Event_HLT_IsoMu24_2p1",&T_Event_HLT_IsoMu24_2p1,"T_Event_HLT_IsoMu24_2p1/I");
+    mytree_->Branch("T_Event_HLT_Mu17_TkMu8_NoDZ",&T_Event_HLT_Mu17_TkMu8_NoDZ,"T_Event_HLT_Mu17_TkMu8_NoDZ/I");
+    mytree_->Branch("T_Event_HLT_Mu13_Mu8_NoDZ",&T_Event_HLT_Mu13_Mu8_NoDZ,"T_Event_HLT_Mu13_Mu8_NoDZ/I");
 
     
     mytree_->Branch("T_Muon_Eta", "std::vector<float>", &T_Muon_Eta);

@@ -18,7 +18,9 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.source = cms.Source(
                             "PoolSource",
-                            fileNames = cms.untracked.vstring('file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/dataFile_runA/theFile.root'
+                            fileNames = cms.untracked.vstring(
+#								'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/fileRunD/reco_file.root'
+								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/dataFile_runA/theFile.root'
 #                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
  #                                                             'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_2.root',
   #                                                            'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_3.root',
@@ -54,7 +56,8 @@ process.noScraping = cms.EDFilter("FilterOutScraping",
 
 process.load("HLTrigger.HLTfilters.triggerResultsFilter_cfi")
 
-process.triggerResultsFilter.triggerConditions = cms.vstring( 'HLT_Mu17_Mu8_v*','HLT_Mu17_TkMu8_v*','HLT_Mu17_v*','HLT_Mu24_eta2p1_v*')
+process.triggerResultsFilter.triggerConditions = cms.vstring( 'HLT_Mu17_Mu8_v*','HLT_Mu17_TkMu8_v*','HLT_Mu17_v*','HLT_Mu24_eta2p1_v*','HLT_Mu17_TkMu8_NoDZ_v*','HLT_Mu13_Mu8_NoDZ_v*')
+#process.triggerResultsFilter.triggerConditions = cms.vstring('HLT_Mu13_Mu8_NoDZ_v*','HLT_Mu17_TkMu8_NoDZ_v*')
 process.triggerResultsFilter.l1tResults = ''
 process.triggerResultsFilter.throw = False
 process.triggerResultsFilter.hltResults = cms.InputTag( "TriggerResults", "", "HLT" )
