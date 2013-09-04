@@ -42,6 +42,11 @@
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/HLTReco/interface/TriggerObject.h"
 
+#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+
 // ROOT stuff !
 #include "TH1D.h"
 #include <map>
@@ -86,6 +91,8 @@ class TriggerMuon : public edm::EDAnalyzer {
       // ----------member data ---------------------------
     vtag muonProducers_;
     // input tags
+    
+    bool isMC_;
 
     edm::InputTag               triggerResultsLabel_;
     edm::InputTag               triggerSummaryLabel_;
@@ -117,7 +124,25 @@ class TriggerMuon : public edm::EDAnalyzer {
     int T_Event_HLT_IsoMu24_2p1;
     int T_Event_HLT_Mu17_TkMu8_NoDZ;
     int T_Event_HLT_Mu13_Mu8_NoDZ;
+
     
+    int T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned;
+    int T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07;
+    int T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80;
+    int T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets;
+    int T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets;
+    int T_Event_HLT_L1ETM30;
+    int T_Event_HLT_MET120_HBHENoiseCleaned;
+    int T_Event_HLT_MET200_HBHENoiseCleaned;
+    int T_Event_HLT_MET200;
+    int T_Event_HLT_MET300_HBHENoiseCleaned;
+    int T_Event_HLT_MET300;
+    int T_Event_HLT_MET400_HBHENoiseCleaned;
+    int T_Event_HLT_MET400;
+    int T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95;
+    int T_Event_HLT_PFMET150;
+    int T_Event_HLT_PFMET180;
+
     
     //muons infos
     std::vector<float>*T_Muon_Eta;
@@ -134,6 +159,18 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<bool> *T_Muon_IsTrackerMuon;
     std::vector<bool> *T_Muon_IsPFMuon;
     std::vector<bool> *T_Muon_IsCaloMuon;
+    
+    std::vector<float>*T_Gen_Muon_Px;
+    std::vector<float>*T_Gen_Muon_Py;
+    std::vector<float>*T_Gen_Muon_Pz;
+    std::vector<float>*T_Gen_Muon_Energy;
+    std::vector<int>*T_Gen_Muon_MCpart;
+    std::vector<int>*T_Gen_Muon_PDGid;
+    std::vector<int>*T_Gen_Muon_status;
+    std::vector<int>*T_Gen_Muon_MotherID;
+    std::vector<float>*T_Gen_Muon_deltaR;
+
+    
 
     
     // PF isolation

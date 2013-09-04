@@ -6,6 +6,8 @@ TriggerMuon::TriggerMuon(const edm::ParameterSet& iConfig)
 
 {
     
+    isMC_                   = iConfig.getParameter<bool>("isMC");
+    
     triggerResultsLabel_    = iConfig.getParameter<edm::InputTag>("TriggerResults");
     triggerSummaryLabel_    = iConfig.getParameter<edm::InputTag>("HLTTriggerSummaryAOD");
     muonProducers_			= iConfig.getParameter<vtag>("muonProducer");
@@ -21,6 +23,22 @@ TriggerMuon::TriggerMuon(const edm::ParameterSet& iConfig)
     HLT_name.push_back("HLT_IsoMu24_eta2p1_v");//4
     HLT_name.push_back("HLT_Mu17_TkMu8_NoDZ_v");//5
     HLT_name.push_back("HLT_Mu13_Mu8_NoDZ_v");//6
+    HLT_name.push_back("HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned_v");//7
+    HLT_name.push_back("HLT_DiCentralPFJet30_PFMET80_BTagCSV07_v");//8
+    HLT_name.push_back("HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80_v");//9
+    HLT_name.push_back("HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v");//10
+    HLT_name.push_back("HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v");//11
+    HLT_name.push_back("HLT_L1ETM30_v");//12
+    HLT_name.push_back("HLT_MET120_HBHENoiseCleaned_v");//13
+    HLT_name.push_back("HLT_MET200_HBHENoiseCleaned_v");//14
+    HLT_name.push_back("HLT_MET200_v");//15
+    HLT_name.push_back("HLT_MET300_HBHENoiseCleaned_v");//16
+    HLT_name.push_back("HLT_MET300_v");//17
+    HLT_name.push_back("HLT_MET400_HBHENoiseCleaned_v");//18
+    HLT_name.push_back("HLT_MET400_v");//19
+    HLT_name.push_back("HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95_v");//20
+    HLT_name.push_back("HLT_PFMET150_v");//21
+    HLT_name.push_back("HLT_PFMET180_v");//22
     
     
     HLT_triggerObjects.push_back("hltL3fL1DoubleMu10MuOpenL1f0L2f10L3Filtered17");// 0 -> DoubleMu17Mu8_Mu17
@@ -66,6 +84,8 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
     using namespace edm;
     using namespace std;
+
+
     beginEvent();
     //recup the muon collection 
     edm::Handle < std::vector <reco::Muon> > recoMuons;
@@ -79,6 +99,16 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     
     edm::Handle<trigger::TriggerEvent> triggerSummary;
     iEvent.getByLabel(triggerSummaryLabel_, triggerSummary);
+    
+    edm::Handle <reco::GenParticleCollection> genParticles;
+    
+    
+    if (isMC_){// get the gen infos
+        edm::Handle<GenEventInfoProduct> genEvent;
+        iEvent.getByLabel("generator", genEvent);
+        iEvent.getByLabel( "genParticles", genParticles );
+    }
+    
     
     // get the HLT config is changed 
     bool changedConfig = false;
@@ -115,6 +145,24 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     T_Event_HLT_IsoMu24_2p1 =         triggerResults->accept(theBitCorr[4]);
     //cout << "inRunD_" << inRunD_ << endl;
     //cout << "theBitCorr" << theBitCorr.size() << endl;
+    T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned = triggerResults->accept(theBitCorr[5]);
+    T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07 = triggerResults->accept(theBitCorr[6]);
+   // T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80 = triggerResults->accept(theBitCorr[9]);
+    T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets = triggerResults->accept(theBitCorr[7]);
+    T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets = triggerResults->accept(theBitCorr[8]);
+    T_Event_HLT_L1ETM30 = triggerResults->accept(theBitCorr[9]);
+    T_Event_HLT_MET120_HBHENoiseCleaned = triggerResults->accept(theBitCorr[10]);
+    T_Event_HLT_MET200_HBHENoiseCleaned = triggerResults->accept(theBitCorr[11]);
+    T_Event_HLT_MET200 = triggerResults->accept(theBitCorr[12]);
+    T_Event_HLT_MET300_HBHENoiseCleaned = triggerResults->accept(theBitCorr[13]);
+    T_Event_HLT_MET300 = triggerResults->accept(theBitCorr[14]);
+    T_Event_HLT_MET400_HBHENoiseCleaned = triggerResults->accept(theBitCorr[15]);
+    T_Event_HLT_MET400 = triggerResults->accept(theBitCorr[16]);
+    //T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95 = triggerResults->accept(theBitCorr[20]);
+    T_Event_HLT_PFMET150 = triggerResults->accept(theBitCorr[17]);
+    T_Event_HLT_PFMET180 = triggerResults->accept(theBitCorr[18]);
+    
+    
     if (inRunD_){
         T_Event_HLT_Mu17_TkMu8_NoDZ =         triggerResults->accept(theBitCorr[5]);
         T_Event_HLT_Mu13_Mu8_NoDZ =         triggerResults->accept(theBitCorr[6]);
@@ -144,13 +192,11 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     T_Event_RunNumber = iEvent.id().run();
     T_Event_EventNumber = iEvent.id().event();
     T_Event_LuminosityBlock = iEvent.id().luminosityBlock();
-    
-
 
     int nbMuons = recoMuons->size();
     for (int k = 0 ; k < nbMuons ; k++){// loop on the muons in the event
         const reco::Muon* muon = &((*recoMuons)[k]);
-        
+        cout << "muon PT =" << muon->pt() << endl; 
         T_Muon_Eta->push_back(muon->eta());
         T_Muon_Phi->push_back(muon->phi());
         T_Muon_IsGlobalMuon->push_back(muon->isGlobalMuon());
@@ -174,6 +220,76 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         T_Muon_photonIsoR03->push_back(muon->pfIsolationR03().sumPhotonEt);
         T_Muon_chargedHadronIsoPUR03->push_back(muon->pfIsolationR03().sumPUPt);
         
+        if (isMC_){
+            int nbOfGen = genParticles->size();
+            float minDiff= 100;
+            int iteDiff = -1000;
+            int motherID = 0;
+            //reco::GenParticle & theCand = (*genParticles)[0];
+            for (int m = 0 ; m < nbOfGen ; m++){
+                const reco::GenParticle & p = (*genParticles)[m];
+                float theDeltaR = deltaR(p.phi(), muon->phi(), p.eta(), muon->eta());
+                if (theDeltaR > 0.2) continue;
+                if (!(p.status()==1)) continue;
+                if (fabs(p.pdgId())!=13) continue;
+                // find the mother of the particle !
+                const reco::Candidate * theLocalCandidate = &p;
+                bool hasMother = (theLocalCandidate->numberOfMothers()>0);
+                const reco::Candidate * theMother;
+                while (hasMother) {
+                    theMother = theLocalCandidate->mother();
+                    //    cout << "mum PDGid = " << theMother->pdgId() << endl;
+                    theLocalCandidate = theMother;
+                    hasMother = (theLocalCandidate->numberOfMothers()>0);
+                    motherID = theMother->pdgId();
+                    if ((theMother->pdgId()==23)||(theMother->pdgId()==22)) break;
+                }
+                //  cout << "fin " << endl;
+                //     float theDiff = fabs(p.pt()-theElec->pt())/p.pt();
+                //     if (theDeltaR < minDiff){
+                minDiff = theDeltaR;
+                iteDiff = m;
+                //  }
+            }
+            
+            
+            if (iteDiff>=0) {
+                const reco::GenParticle & theCand = (*genParticles)[iteDiff];
+                const reco::Candidate * mom = theCand.mother();
+                //     cout << "ID =" << theCand.pdgId() << " pt = " << theCand.pt() << " status=" << theCand.status() << endl;
+                //   cout << "nb of mother " << theCand.numberOfMothers() << endl;
+                if (theCand.numberOfMothers()>0) mom = theCand.mother();
+                //   cout << "mother id " << mom->pdgId() << endl;
+                T_Gen_Muon_Px->push_back(theCand.px());
+                T_Gen_Muon_Py->push_back(theCand.py());
+                T_Gen_Muon_Pz->push_back(theCand.pz());
+                T_Gen_Muon_Energy->push_back(theCand.energy());
+                T_Gen_Muon_MCpart->push_back(1);
+                T_Gen_Muon_PDGid->push_back(theCand.pdgId());
+                T_Gen_Muon_status->push_back(theCand.status());
+                //if (theCand.numberOfMothers()>0) T_Gen_Muon_MotherID->push_back(mom->pdgId());
+                if (theCand.numberOfMothers()>0) T_Gen_Muon_MotherID->push_back(motherID);
+                else T_Gen_Muon_MotherID->push_back(-1);
+                T_Gen_Muon_deltaR->push_back(minDiff);
+            }
+            else{
+                T_Gen_Muon_Px->push_back(-1);
+                T_Gen_Muon_Py->push_back(-1);
+                T_Gen_Muon_Pz->push_back(-1);
+                T_Gen_Muon_Energy->push_back(-1);
+                T_Gen_Muon_MCpart->push_back(0);
+                T_Gen_Muon_PDGid->push_back(-1);
+                T_Gen_Muon_status->push_back(-1);
+                T_Gen_Muon_MotherID->push_back(-1);  
+                T_Gen_Muon_deltaR->push_back(-1);
+                
+            }
+            
+        
+        
+        
+    }
+    
   /*      int pass_HLT_Mu17_TkMu8_Mu17Leg = 0;
         int pass_HLT_Mu17_TkMu8_Mu8Leg = 0;
         int pass_HLT_Mu17_Mu8_Mu17Leg = 0;
@@ -218,6 +334,8 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
     
     
+    cout << "eventNumber=" << iEvent.id().event() << endl;
+
     mytree_->Fill();
     endEvent();
 }
@@ -240,7 +358,22 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Event_HLT_IsoMu24",&T_Event_HLT_IsoMu24,"T_Event_HLT_IsoMu24/I");
     mytree_->Branch("T_Event_HLT_IsoMu24_2p1",&T_Event_HLT_IsoMu24_2p1,"T_Event_HLT_IsoMu24_2p1/I");
     mytree_->Branch("T_Event_HLT_Mu17_TkMu8_NoDZ",&T_Event_HLT_Mu17_TkMu8_NoDZ,"T_Event_HLT_Mu17_TkMu8_NoDZ/I");
-    mytree_->Branch("T_Event_HLT_Mu13_Mu8_NoDZ",&T_Event_HLT_Mu13_Mu8_NoDZ,"T_Event_HLT_Mu13_Mu8_NoDZ/I");
+    mytree_->Branch("T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned",&T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned,"T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned/I");
+    mytree_->Branch("T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07",&T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07,"T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07/I");
+    mytree_->Branch("T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80",&T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80,"T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80/I");
+    mytree_->Branch("T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets",&T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets,"T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets/I");
+    mytree_->Branch("T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets",&T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets,"T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets/I");
+    mytree_->Branch("T_Event_HLT_L1ETM30",&T_Event_HLT_L1ETM30,"T_Event_HLT_L1ETM30/I");
+    mytree_->Branch("T_Event_HLT_MET120_HBHENoiseCleaned",&T_Event_HLT_MET120_HBHENoiseCleaned,"T_Event_HLT_MET120_HBHENoiseCleaned/I");
+    mytree_->Branch("T_Event_HLT_MET200_HBHENoiseCleaned",&T_Event_HLT_MET200_HBHENoiseCleaned,"T_Event_HLT_MET200_HBHENoiseCleaned/I");
+    mytree_->Branch("T_Event_HLT_MET200",&T_Event_HLT_MET200,"T_Event_HLT_MET200/I");
+    mytree_->Branch("T_Event_HLT_MET300_HBHENoiseCleaned",&T_Event_HLT_MET300_HBHENoiseCleaned,"T_Event_HLT_MET300_HBHENoiseCleaned/I");
+    mytree_->Branch("T_Event_HLT_MET300",&T_Event_HLT_MET300,"T_Event_HLT_MET300/I");
+    mytree_->Branch("T_Event_HLT_MET400_HBHENoiseCleaned",&T_Event_HLT_MET400_HBHENoiseCleaned,"T_Event_HLT_MET400_HBHENoiseCleaned/I");
+    mytree_->Branch("T_Event_HLT_MET400",&T_Event_HLT_MET400,"T_Event_HLT_MET400/I");
+    mytree_->Branch("T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95",&T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95,"T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95/I");
+    mytree_->Branch("T_Event_HLT_PFMET150",&T_Event_HLT_PFMET150,"T_Event_HLT_PFMET150/I");
+    mytree_->Branch("T_Event_HLT_PFMET180",&T_Event_HLT_PFMET180,"T_Event_HLT_PFMET180/I");
 
     
     mytree_->Branch("T_Muon_Eta", "std::vector<float>", &T_Muon_Eta);
@@ -264,6 +397,17 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Muon_photonIsoR03", "std::vector<float>", &T_Muon_photonIsoR03);
     mytree_->Branch("T_Muon_chargedHadronIsoPUR03", "std::vector<float>", &T_Muon_chargedHadronIsoPUR03);
 
+    mytree_->Branch("T_Gen_Muon_Px", "std::vector<float>", &T_Gen_Muon_Px);
+    mytree_->Branch("T_Gen_Muon_Py", "std::vector<float>", &T_Gen_Muon_Py);
+    mytree_->Branch("T_Gen_Muon_Pz", "std::vector<float>", &T_Gen_Muon_Pz);
+    mytree_->Branch("T_Gen_Muon_Energy", "std::vector<float>", &T_Gen_Muon_Energy);
+    mytree_->Branch("T_Gen_Muon_MCpart", "std::vector<int>", &T_Gen_Muon_MCpart);
+    mytree_->Branch("T_Gen_Muon_PDGid", "std::vector<int>", &T_Gen_Muon_PDGid);
+    mytree_->Branch("T_Gen_Muon_status", "std::vector<int>", &T_Gen_Muon_status);
+    mytree_->Branch("T_Gen_Muon_MotherID", "std::vector<int>", &T_Gen_Muon_MotherID);
+    mytree_->Branch("T_Gen_Muon_deltaR", "std::vector<float>", &T_Gen_Muon_deltaR);
+
+    
     
     mytree_->Branch("T_TrigObj_Pt", "std::vector<float>", &T_TrigObj_Pt);
     mytree_->Branch("T_TrigObj_Eta", "std::vector<float>", &T_TrigObj_Eta);
@@ -328,6 +472,17 @@ TriggerMuon::beginEvent()
     T_Muon_neutralHadronIsoR03 = new std::vector<float>;
     T_Muon_photonIsoR03 = new std::vector<float>;
     T_Muon_chargedHadronIsoPUR03 = new std::vector<float>;
+    
+    T_Gen_Muon_Px = new std::vector<float>;
+    T_Gen_Muon_Py = new std::vector<float>;
+    T_Gen_Muon_Pz = new std::vector<float>;
+    T_Gen_Muon_Energy = new std::vector<float>;
+    T_Gen_Muon_MCpart = new std::vector<int>;
+    T_Gen_Muon_PDGid = new std::vector<int>;
+    T_Gen_Muon_status = new std::vector<int>;
+    T_Gen_Muon_MotherID = new std::vector<int>;
+    T_Gen_Muon_deltaR = new std::vector<float>;
+
 
     T_TrigObj_Pt = new std::vector<float>;
     T_TrigObj_Eta = new std::vector<float>;
@@ -359,6 +514,18 @@ TriggerMuon::endEvent()
 	delete T_Muon_neutralHadronIsoR03;
 	delete T_Muon_photonIsoR03;
 	delete T_Muon_chargedHadronIsoPUR03;
+    
+	delete T_Gen_Muon_Px;
+	delete T_Gen_Muon_Py;
+	delete T_Gen_Muon_Pz;
+	delete T_Gen_Muon_Energy;
+	delete T_Gen_Muon_MCpart;
+	delete T_Gen_Muon_PDGid;
+	delete T_Gen_Muon_status;
+	delete T_Gen_Muon_MotherID;
+	delete T_Gen_Muon_deltaR;
+    
+    
 	delete T_TrigObj_Pt;
 	delete T_TrigObj_Eta;
 	delete T_TrigObj_Phi;

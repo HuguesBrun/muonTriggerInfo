@@ -7,7 +7,7 @@ process.load('Configuration/StandardSequences/MagneticField_38T_cff')
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.load("Configuration.StandardSequences.Reconstruction_cff")
 process.GlobalTag.globaltag = 'START53_V7A::All'
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 #
@@ -19,12 +19,17 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.source = cms.Source(
                             "PoolSource",
                             fileNames = cms.untracked.vstring(
+								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_1.root',
+								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_2.root',
+								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_3.root',
+								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_4.root',
+								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_5.root',
 #								'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/fileRunD/reco_file.root'
-								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/dataFile_runA/theFile.root'
+                                                              #								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/dataFile_runA/theFile.root'
 #                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
  #                                                             'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_2.root',
   #                                                            'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_3.root',
-   #                                                           'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_4.root',
+   #                                                          'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_4.root',
     #                                                          'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_5.root',
                                                               ),
                             secondaryFileNames = cms.untracked.vstring(),
@@ -35,6 +40,7 @@ process.source = cms.Source(
 
 
 process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
+                                     isMC               = cms.bool(True),
                                      muonProducer 		= cms.VInputTag(cms.InputTag("muons")),
                                      TriggerResults          = cms.InputTag("TriggerResults", "", "HLT"),
                                      HLTTriggerSummaryAOD    = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),
@@ -62,7 +68,8 @@ process.triggerResultsFilter.l1tResults = ''
 process.triggerResultsFilter.throw = False
 process.triggerResultsFilter.hltResults = cms.InputTag( "TriggerResults", "", "HLT" )
 
-process.p = cms.Path(process.triggerResultsFilter+process.goodVertexFilter + process.noScraping+process.triggerMuon)
+#process.p = cms.Path(process.triggerResultsFilter+process.goodVertexFilter + process.noScraping+process.triggerMuon)
+process.p = cms.Path(process.goodVertexFilter + process.noScraping+process.triggerMuon)
 
 
 
