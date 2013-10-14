@@ -16,45 +16,17 @@ TriggerMuon::TriggerMuon(const edm::ParameterSet& iConfig)
     rootFile_ = TFile::Open(outputFile_.c_str(),"RECREATE");
     
     
-    HLT_name.push_back("HLT_Mu17_TkMu8_v");//0
-    HLT_name.push_back("HLT_Mu17_Mu8_v");//1
-    HLT_name.push_back("HLT_Mu17_v");//2
-    HLT_name.push_back("HLT_Mu8_v");//3
-    HLT_name.push_back("HLT_IsoMu24_eta2p1_v");//4
-    HLT_name.push_back("HLT_Mu17_TkMu8_NoDZ_v");//5
-    HLT_name.push_back("HLT_Mu13_Mu8_NoDZ_v");//6
-    HLT_name.push_back("HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned_v");//7
-    HLT_name.push_back("HLT_DiCentralPFJet30_PFMET80_BTagCSV07_v");//8
-    HLT_name.push_back("HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80_v");//9
-    HLT_name.push_back("HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets_v");//10
-    HLT_name.push_back("HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets_v");//11
-    HLT_name.push_back("HLT_L1ETM30_v");//12
-    HLT_name.push_back("HLT_MET120_HBHENoiseCleaned_v");//13
-    HLT_name.push_back("HLT_MET200_HBHENoiseCleaned_v");//14
-    HLT_name.push_back("HLT_MET200_v");//15
-    HLT_name.push_back("HLT_MET300_HBHENoiseCleaned_v");//16
-    HLT_name.push_back("HLT_MET300_v");//17
-    HLT_name.push_back("HLT_MET400_HBHENoiseCleaned_v");//18
-    HLT_name.push_back("HLT_MET400_v");//19
-    HLT_name.push_back("HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95_v");//20
-    HLT_name.push_back("HLT_PFMET150_v");//21
-    HLT_name.push_back("HLT_PFMET180_v");//22
+    HLT_name.push_back("HLT_Mu17_Mu8_v");//0
+    HLT_name.push_back("HLT_Mu17_TkMu8_v");//1
     
     
     HLT_triggerObjects.push_back("hltL3fL1DoubleMu10MuOpenL1f0L2f10L3Filtered17");// 0 -> DoubleMu17Mu8_Mu17
-    HLT_triggerObjects.push_back("hltL3fL1DoubleMu10MuOpenOR3p5L1f0L2f10L3Filtered17");// 1 -> DoubleMu17Mu8_Mu17
-    HLT_triggerObjects.push_back("hltL3pfL1DoubleMu10MuOpenL1f0L2pf0L3PreFiltered8");// 2-> DoubleMu17Mu8_Mu8
-    HLT_triggerObjects.push_back("hltL3pfL1DoubleMu10MuOpenOR3p5L1f0L2pf0L3PreFiltered8");//3-> DoubleMu17Mu8_Mu8
-    HLT_triggerObjects.push_back("hltL3fL1sMu10MuOpenL1f0L2f10L3Filtered17");// 4-> DoubleMu17TkMu8_Mu17leg
-    HLT_triggerObjects.push_back("hltL3fL1sMu10MuOpenOR3p5L1f0L2f10L3Filtered17");// 5-> DoubleMu17TkMu8_Mu17leg
-    HLT_triggerObjects.push_back("hltDiMuonGlbFiltered17TrkFiltered8");// 6-> DoubleMu17TkMu8_TkMu8leg
-    HLT_triggerObjects.push_back("hltL3crIsoL1sMu16L1f0L2f16QL3f24QL3crIsoRhoFiltered0p15");// 7 -> IsoMu24
-    HLT_triggerObjects.push_back("hltL3fL1sMu12L3Filtered17");// 8 -> Mu17
-    HLT_triggerObjects.push_back("hltL3fL1sMu3L3Filtered8");// 9 -> Mu8
-    HLT_triggerObjects.push_back("hltL3fL1DoubleMu10MuOpenOR3p5L1f0L2f10L3Filtered13");// 10 -> Mu13_Mu8_NoDZ_leg13
+    HLT_triggerObjects.push_back("hltL3pfL1DoubleMu10MuOpenL1f0L2pf0L3PreFiltered8");// 1-> DoubleMu17Mu8_Mu8
+    HLT_triggerObjects.push_back("hltL3fL1sMu10MuOpenL1f0L2f10L3Filtered17");// 2-> DoubleMu17TkMu8_Mu17leg
+    HLT_triggerObjects.push_back("hltDiMuonGlbFiltered17TrkFiltered8");// 3-> DoubleMu17TkMu8_TkMu8leg
+
     
-    // initialize the in runD
-    inRunD_ = false;
+
     
 
     
@@ -125,10 +97,6 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     cout << j << " = " << hltConfig.triggerNames()[j] << endl;
                     theBitCorr.push_back(j);
                 }
-                if (TString(hltConfig.triggerNames()[j]).Contains(HLT_name[5])){
-                    cout << "on est content car on est bien dans le run D !!!" << endl;
-                    inRunD_ = true;
-                }
             }
         }
         for (unsigned int j=0; j<HLT_triggerObjects.size(); j++)
@@ -137,48 +105,18 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     
     //cout << "on va filler le HLT" << endl;
     
-    T_Event_HLT_Mu17_Mu8 =         triggerResults->accept(theBitCorr[1]);
-    T_Event_HLT_Mu17_TkMu8 =         triggerResults->accept(theBitCorr[0]);
-    T_Event_HLT_Mu17 =         triggerResults->accept(theBitCorr[2]);
-    T_Event_HLT_Mu8 =         triggerResults->accept(theBitCorr[3]);
-  //  T_Event_HLT_IsoMu24 =         triggerResults->accept(theBitCorr[4]);
-    T_Event_HLT_IsoMu24_2p1 =         triggerResults->accept(theBitCorr[4]);
-    //cout << "inRunD_" << inRunD_ << endl;
-    //cout << "theBitCorr" << theBitCorr.size() << endl;
-/*    T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned = triggerResults->accept(theBitCorr[5]);
-    T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07 = triggerResults->accept(theBitCorr[6]);
-   // T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80 = triggerResults->accept(theBitCorr[9]);
-    T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets = triggerResults->accept(theBitCorr[7]);
-    T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ800VBF_AllJets = triggerResults->accept(theBitCorr[8]);
-    T_Event_HLT_L1ETM30 = triggerResults->accept(theBitCorr[9]);
-    T_Event_HLT_MET120_HBHENoiseCleaned = triggerResults->accept(theBitCorr[10]);
-    T_Event_HLT_MET200_HBHENoiseCleaned = triggerResults->accept(theBitCorr[11]);
-    T_Event_HLT_MET200 = triggerResults->accept(theBitCorr[12]);
-    T_Event_HLT_MET300_HBHENoiseCleaned = triggerResults->accept(theBitCorr[13]);
-    T_Event_HLT_MET300 = triggerResults->accept(theBitCorr[14]);
-    T_Event_HLT_MET400_HBHENoiseCleaned = triggerResults->accept(theBitCorr[15]);
-    T_Event_HLT_MET400 = triggerResults->accept(theBitCorr[16]);
-    //T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95 = triggerResults->accept(theBitCorr[20]);
-    T_Event_HLT_PFMET150 = triggerResults->accept(theBitCorr[17]);
-    T_Event_HLT_PFMET180 = triggerResults->accept(theBitCorr[18]);
-  */  
+    T_Event_HLT_Mu17_Mu8 =         triggerResults->accept(theBitCorr[0]);
+    T_Event_HLT_Mu17_TkMu8 =         triggerResults->accept(theBitCorr[1]);
     
-    if (inRunD_){
-        T_Event_HLT_Mu17_TkMu8_NoDZ =         triggerResults->accept(theBitCorr[5]);
-        T_Event_HLT_Mu13_Mu8_NoDZ =         triggerResults->accept(theBitCorr[6]);
-    }
+
     /// fill the in selected Objet the HLT filter we will use for the matching
     trigger::TriggerObjectCollection allTriggerObjects = triggerSummary->getObjects();
     trigger::TriggerObjectCollection selectedObjects;
     vector<int> theHLTcorr;
-   // cout << "just avant la loop" << endl;
     for (size_t t=0; t<moduleLabels.size(); t++) {
-        //cout << "t=" << moduleLabels[t] << endl;
-       // cout << "apres" << endl;
         size_t filterIndex = (*triggerSummary).filterIndex(moduleLabels[t]);
         if (filterIndex < (*triggerSummary).sizeFilters()) {
             const trigger::Keys &keys = (*triggerSummary).filterKeys(filterIndex);
-            
             for (size_t j = 0; j < keys.size(); j++) {
                 trigger::TriggerObject foundObject = (allTriggerObjects)[keys[j]];
                 selectedObjects.push_back(foundObject);
@@ -187,7 +125,6 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
     }
     
-    //cout << "taille corrHLT = " << theHLTcorr.size() << endl;
     //fill event variables : 
     T_Event_RunNumber = iEvent.id().run();
     T_Event_EventNumber = iEvent.id().event();
@@ -210,56 +147,38 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         T_Muon_Pz->push_back(muon->pz());
         T_Muon_Mass->push_back(muon->mass());
         
-
-        T_Muon_chargedHadronIsoR04->push_back(muon->pfIsolationR04().sumChargedHadronPt);
-        T_Muon_neutralHadronIsoR04->push_back(muon->pfIsolationR04().sumNeutralHadronEt);
-        T_Muon_photonIsoR04->push_back(muon->pfIsolationR04().sumPhotonEt);
-        T_Muon_chargedHadronIsoPUR04->push_back(muon->pfIsolationR04().sumPUPt);
-        T_Muon_chargedHadronIsoR03->push_back(muon->pfIsolationR03().sumChargedHadronPt);
-        T_Muon_neutralHadronIsoR03->push_back(muon->pfIsolationR03().sumNeutralHadronEt);
-        T_Muon_photonIsoR03->push_back(muon->pfIsolationR03().sumPhotonEt);
-        T_Muon_chargedHadronIsoPUR03->push_back(muon->pfIsolationR03().sumPUPt);
-        
+  
         if (isMC_){
+            // now do the matching with the gen particles : 
             int nbOfGen = genParticles->size();
             float minDiff= 100;
             int iteDiff = -1000;
             int motherID = 0;
-            //reco::GenParticle & theCand = (*genParticles)[0];
-            for (int m = 0 ; m < nbOfGen ; m++){
+            for (int m = 0 ; m < nbOfGen ; m++){//loop on the gen particles
                 const reco::GenParticle & p = (*genParticles)[m];
                 float theDeltaR = deltaR(p.phi(), muon->phi(), p.eta(), muon->eta());
                 if (theDeltaR > 0.2) continue;
                 if (!(p.status()==1)) continue;
-                if (fabs(p.pdgId())!=13) continue;
-                // find the mother of the particle !
+                if (fabs(p.pdgId())!=13) continue; // found a stable gen muon matching with the reco muon
                 const reco::Candidate * theLocalCandidate = &p;
                 bool hasMother = (theLocalCandidate->numberOfMothers()>0);
                 const reco::Candidate * theMother;
-                while (hasMother) {
+                while (hasMother) {//check if the muon has a Z in its mother particles
                     theMother = theLocalCandidate->mother();
-                    //    cout << "mum PDGid = " << theMother->pdgId() << endl;
                     theLocalCandidate = theMother;
                     hasMother = (theLocalCandidate->numberOfMothers()>0);
                     motherID = theMother->pdgId();
                     if ((theMother->pdgId()==23)||(theMother->pdgId()==22)) break;
                 }
-                //  cout << "fin " << endl;
-                //     float theDiff = fabs(p.pt()-theElec->pt())/p.pt();
-                //     if (theDeltaR < minDiff){
-                minDiff = theDeltaR;
+                minDiff = theDeltaR; // save the deltaR between the gen part and the reco muon
                 iteDiff = m;
-                //  }
             }
             
             
-            if (iteDiff>=0) {
+            if (iteDiff>=0) {//save in the tree all the infos on the gen particles 
                 const reco::GenParticle & theCand = (*genParticles)[iteDiff];
                 const reco::Candidate * mom = theCand.mother();
-                //     cout << "ID =" << theCand.pdgId() << " pt = " << theCand.pt() << " status=" << theCand.status() << endl;
-                //   cout << "nb of mother " << theCand.numberOfMothers() << endl;
                 if (theCand.numberOfMothers()>0) mom = theCand.mother();
-                //   cout << "mother id " << mom->pdgId() << endl;
                 T_Gen_Muon_Px->push_back(theCand.px());
                 T_Gen_Muon_Py->push_back(theCand.py());
                 T_Gen_Muon_Pz->push_back(theCand.pz());
@@ -267,12 +186,11 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 T_Gen_Muon_MCpart->push_back(1);
                 T_Gen_Muon_PDGid->push_back(theCand.pdgId());
                 T_Gen_Muon_status->push_back(theCand.status());
-                //if (theCand.numberOfMothers()>0) T_Gen_Muon_MotherID->push_back(mom->pdgId());
                 if (theCand.numberOfMothers()>0) T_Gen_Muon_MotherID->push_back(motherID);
                 else T_Gen_Muon_MotherID->push_back(-1);
                 T_Gen_Muon_deltaR->push_back(minDiff);
             }
-            else{
+            else{  // -1 if not matching gen particle found ...
                 T_Gen_Muon_Px->push_back(-1);
                 T_Gen_Muon_Py->push_back(-1);
                 T_Gen_Muon_Pz->push_back(-1);
@@ -289,41 +207,30 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         
         
     }
-    
-  /*      int pass_HLT_Mu17_TkMu8_Mu17Leg = 0;
-        int pass_HLT_Mu17_TkMu8_Mu8Leg = 0;
+        
         int pass_HLT_Mu17_Mu8_Mu17Leg = 0;
         int pass_HLT_Mu17_Mu8_Mu8Leg = 0;
-        int pass_HLT_Mu17_Mu17_obj = 0;
-        int pass_HLT_Mu17_Mu8_obj = 0;
-        int pass_HLT_IsoMu24 = 0;
-        int pass_HLT_IsoMu24_2p1 = 0;
+        int pass_HLT_Mu17_TkMu8_Mu17Leg = 0;
+        int pass_HLT_Mu17_TkMu8_Mu8Leg = 0;
+
 
         
         for (size_t t = 0 ; t < selectedObjects.size() ; t++){
-            // cout << "eta = " << selectedObjects[t].eta() << " phi = " << selectedObjects[t].phi() << "muon Pt =" << muon->pt()<< "filter = " << HLT_triggerObjects[theHLTcorr[t]] << endl;
-            // cout << "pt trigger" << selectedObjects[t].pt() << endl;
             float HLTdeltaR = deltaR(muon->phi(), selectedObjects[t].phi(), muon->eta(), selectedObjects[t].eta());
             float relatDeltaPt = fabs(selectedObjects[t].pt()-muon->pt())/muon->pt();
-            if (HLTdeltaR < 0.1){
-                if ((theHLTcorr[t] == 0)||(theHLTcorr[t] == 1))  pass_HLT_Mu17_Mu8_Mu17Leg = 1;
-                if ((theHLTcorr[t] == 2)||(theHLTcorr[t] == 3))  pass_HLT_Mu17_Mu8_Mu8Leg = 1;
-                if ((theHLTcorr[t] == 4)||(theHLTcorr[t] == 5))  pass_HLT_Mu17_TkMu8_Mu17Leg = 1;
-                if (theHLTcorr[t] == 6)                          pass_HLT_Mu17_TkMu8_Mu8Leg = 1;
-                if (theHLTcorr[t] == 7)                          pass_HLT_IsoMu24 = 1;
-                if (theHLTcorr[t] == 8)                          pass_HLT_Mu17_Mu17_obj = 1;
-                if (theHLTcorr[t] == 9)                          pass_HLT_Mu17_Mu8_obj = 1;
+            if (HLTdeltaR < 0.3){
+                if (theHLTcorr[t] == 0)  pass_HLT_Mu17_Mu8_Mu17Leg = 1;
+                if (theHLTcorr[t] == 1)  pass_HLT_Mu17_Mu8_Mu8Leg = 1;
+                if (theHLTcorr[t] == 2)  pass_HLT_Mu17_TkMu8_Mu17Leg = 1;
+                if (theHLTcorr[t] == 3)  pass_HLT_Mu17_TkMu8_Mu8Leg = 1;
             }
         }
-        T_Muon_HLT_Mu17_TkMu8_Mu17Leg->push_back(pass_HLT_Mu17_TkMu8_Mu17Leg);
-        T_Muon_HLT_Mu17_TkMu8_Mu8Leg->push_back(pass_HLT_Mu17_TkMu8_Mu8Leg);
         T_Muon_HLT_Mu17_Mu8_Mu17Leg->push_back(pass_HLT_Mu17_Mu8_Mu17Leg);
         T_Muon_HLT_Mu17_Mu8_Mu8Leg->push_back(pass_HLT_Mu17_Mu8_Mu8Leg);
-        T_Muon_HLT_Mu17_obj->push_back(pass_HLT_Mu17_Mu17_obj);
-        T_Muon_HLT_Mu8_obj->push_back(pass_HLT_Mu17_Mu8_obj);
-        T_Muon_HLT_IsoMu24->push_back(pass_HLT_IsoMu24);*/
+        T_Muon_HLT_Mu17_TkMu8_Mu17Leg->push_back(pass_HLT_Mu17_TkMu8_Mu17Leg);
+        T_Muon_HLT_Mu17_TkMu8_Mu8Leg->push_back(pass_HLT_Mu17_TkMu8_Mu8Leg);
+
     }
-   // cout << "milieu de l event" << endl;
     //save now HLT objects !
     for (size_t t = 0 ; t < selectedObjects.size() ; t++){
         T_TrigObj_Pt->push_back(selectedObjects[t].pt());
@@ -334,7 +241,6 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
     
     
-    cout << "eventNumber=" << iEvent.id().event() << endl;
 
     mytree_->Fill();
     endEvent();
@@ -355,7 +261,7 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Event_HLT_Mu17_TkMu8",&T_Event_HLT_Mu17_TkMu8,"T_Event_HLT_Mu17_TkMu8/I");
     mytree_->Branch("T_Event_HLT_Mu17",&T_Event_HLT_Mu17,"T_Event_HLT_Mu17/I");
     mytree_->Branch("T_Event_HLT_Mu8",&T_Event_HLT_Mu8,"T_Event_HLT_Mu8/I");
-    mytree_->Branch("T_Event_HLT_IsoMu24",&T_Event_HLT_IsoMu24,"T_Event_HLT_IsoMu24/I");
+   /* mytree_->Branch("T_Event_HLT_IsoMu24",&T_Event_HLT_IsoMu24,"T_Event_HLT_IsoMu24/I");
     mytree_->Branch("T_Event_HLT_IsoMu24_2p1",&T_Event_HLT_IsoMu24_2p1,"T_Event_HLT_IsoMu24_2p1/I");
     mytree_->Branch("T_Event_HLT_Mu17_TkMu8_NoDZ",&T_Event_HLT_Mu17_TkMu8_NoDZ,"T_Event_HLT_Mu17_TkMu8_NoDZ/I");
     mytree_->Branch("T_Event_HLT_Mu13_Mu8_NoDZ",&T_Event_HLT_Mu13_Mu8_NoDZ,"T_Event_HLT_Mu13_Mu8_NoDZ/I");
@@ -374,7 +280,7 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Event_HLT_MET400",&T_Event_HLT_MET400,"T_Event_HLT_MET400/I");
     mytree_->Branch("T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95",&T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95,"T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95/I");
     mytree_->Branch("T_Event_HLT_PFMET150",&T_Event_HLT_PFMET150,"T_Event_HLT_PFMET150/I");
-    mytree_->Branch("T_Event_HLT_PFMET180",&T_Event_HLT_PFMET180,"T_Event_HLT_PFMET180/I");
+    mytree_->Branch("T_Event_HLT_PFMET180",&T_Event_HLT_PFMET180,"T_Event_HLT_PFMET180/I");*/
 
     
     mytree_->Branch("T_Muon_Eta", "std::vector<float>", &T_Muon_Eta);
@@ -397,6 +303,13 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Muon_neutralHadronIsoR03", "std::vector<float>", &T_Muon_neutralHadronIsoR03);
     mytree_->Branch("T_Muon_photonIsoR03", "std::vector<float>", &T_Muon_photonIsoR03);
     mytree_->Branch("T_Muon_chargedHadronIsoPUR03", "std::vector<float>", &T_Muon_chargedHadronIsoPUR03);
+    
+    mytree_->Branch("T_Muon_HLT_Mu17_Mu8_Mu17Leg", "std::vector<bool>", &T_Muon_HLT_Mu17_Mu8_Mu17Leg);
+    mytree_->Branch("T_Muon_HLT_Mu17_Mu8_Mu8Leg", "std::vector<bool>", &T_Muon_HLT_Mu17_Mu8_Mu8Leg);
+    mytree_->Branch("T_Muon_HLT_Mu17_TkMu8_Mu17Leg", "std::vector<bool>", &T_Muon_HLT_Mu17_TkMu8_Mu17Leg);
+    mytree_->Branch("T_Muon_HLT_Mu17_TkMu8_Mu8Leg", "std::vector<bool>", &T_Muon_HLT_Mu17_TkMu8_Mu8Leg);
+
+    
 
     mytree_->Branch("T_Gen_Muon_Px", "std::vector<float>", &T_Gen_Muon_Px);
     mytree_->Branch("T_Gen_Muon_Py", "std::vector<float>", &T_Gen_Muon_Py);
@@ -474,6 +387,11 @@ TriggerMuon::beginEvent()
     T_Muon_photonIsoR03 = new std::vector<float>;
     T_Muon_chargedHadronIsoPUR03 = new std::vector<float>;
     
+    T_Muon_HLT_Mu17_Mu8_Mu17Leg = new std::vector<bool>;
+    T_Muon_HLT_Mu17_Mu8_Mu8Leg = new std::vector<bool>;
+    T_Muon_HLT_Mu17_TkMu8_Mu17Leg = new std::vector<bool>;
+    T_Muon_HLT_Mu17_TkMu8_Mu8Leg = new std::vector<bool>;
+    
     T_Gen_Muon_Px = new std::vector<float>;
     T_Gen_Muon_Py = new std::vector<float>;
     T_Gen_Muon_Pz = new std::vector<float>;
@@ -515,6 +433,11 @@ TriggerMuon::endEvent()
 	delete T_Muon_neutralHadronIsoR03;
 	delete T_Muon_photonIsoR03;
 	delete T_Muon_chargedHadronIsoPUR03;
+    
+    delete T_Muon_HLT_Mu17_Mu8_Mu17Leg;
+    delete T_Muon_HLT_Mu17_Mu8_Mu8Leg;
+    delete T_Muon_HLT_Mu17_TkMu8_Mu17Leg;
+    delete T_Muon_HLT_Mu17_TkMu8_Mu8Leg;
     
 	delete T_Gen_Muon_Px;
 	delete T_Gen_Muon_Py;

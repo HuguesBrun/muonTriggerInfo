@@ -160,6 +160,14 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<bool> *T_Muon_IsPFMuon;
     std::vector<bool> *T_Muon_IsCaloMuon;
     
+    // muon matched with trigger object :
+    std::vector<bool> *T_Muon_HLT_Mu17_Mu8_Mu17Leg;
+    std::vector<bool> *T_Muon_HLT_Mu17_Mu8_Mu8Leg;
+    std::vector<bool> *T_Muon_HLT_Mu17_TkMu8_Mu17Leg;
+    std::vector<bool> *T_Muon_HLT_Mu17_TkMu8_Mu8Leg;
+    
+    
+    
     std::vector<float>*T_Gen_Muon_Px;
     std::vector<float>*T_Gen_Muon_Py;
     std::vector<float>*T_Gen_Muon_Pz;
@@ -183,6 +191,9 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<float> *T_Muon_neutralHadronIsoR03;
     std::vector<float> *T_Muon_photonIsoR03;
     std::vector<float> *T_Muon_chargedHadronIsoPUR03;
+    
+    
+    
     
 
     // trigger object
