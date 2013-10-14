@@ -19,20 +19,16 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.source = cms.Source(
                             "PoolSource",
                             fileNames = cms.untracked.vstring(
-                                'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root'
-#								'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/fileRunD/reco_file.root'
-#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_1.root',
-#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_2.root',
-#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_3.root',
-#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_4.root',
-#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_5.root',
-#								'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/fileRunD/reco_file.root'
-                                                              #								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/dataFile_runA/theFile.root'
-#                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
- #                                                             'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_2.root',
-  #                                                            'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_3.root',
-   #                                                          'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_4.root',
-    #                                                          'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_5.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_1_1_EkA.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_2_1_Toe.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_3_1_Lu4.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_4_1_un5.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_5_1_J2H.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_6_1_Rp7.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_7_1_XVZ.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_8_1_D9w.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_9_1_AHt.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_10_1_z3g.root'
                                                               ),
                             secondaryFileNames = cms.untracked.vstring(),
                             noEventSort = cms.untracked.bool(True),
@@ -42,7 +38,7 @@ process.source = cms.Source(
 
 
 process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
-                                     isMC               = cms.bool(False),
+                                     isMC               = cms.bool(True),
                                      muonProducer 		= cms.VInputTag(cms.InputTag("muons")),
                                      TriggerResults          = cms.InputTag("TriggerResults", "", "HLT"),
                                      HLTTriggerSummaryAOD    = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),
