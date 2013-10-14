@@ -76,7 +76,7 @@ computeTheTriggerEff(){
             nbGenMuonsFromZ++;
         }
         //cout << "nb nbZ genmuons=" << nbGenMuonsFromZ << endl;
-        if (!(nbGenMuonsFromZ==2)) continue; // if not Z->mu mu gen event then go to next event
+        if (!(nbGenMuonsFromZ>=2)) continue; // if not Z->mu mu gen event then go to next event
         
         
         
@@ -90,32 +90,42 @@ computeTheTriggerEff(){
             nbLooseMuons++;
         }
         //cout << "nb Loose muons=" << nbLooseMuons << endl;
-        if (!(nbLooseMuons==2)) continue;
+        if (!(nbLooseMuons>=2)) continue;
         
         // fill the trigger paths histos ! 
         h_Mu17_Mu8->Fill(T_Event_HLT_Mu17_Mu8);
         h_Mu17_TkMu8->Fill(T_Event_HLT_Mu17_TkMu8);
         
         
-        
         //fill the trigger paths after match:
-        int passMu17Mu8andMatched = (T_Event_HLT_Mu17_Mu8&&(
-                                                            (T_Muon_HLT_Mu17_Mu8_Mu17Leg->at(refLooseMuons.at(0))&&T_Muon_HLT_Mu17_Mu8_Mu8Leg->at(refLooseMuons.at(1)))
-                                                            ||
-                                                            (T_Muon_HLT_Mu17_Mu8_Mu17Leg->at(refLooseMuons.at(1))&&T_Muon_HLT_Mu17_Mu8_Mu8Leg->at(refLooseMuons.at(0)))
-                                                            )
-                                     );
-        h_Mu17_Mu8_withMatch->Fill(passMu17Mu8andMatched);
+        for (int j = 0 ; j < refLooseMuons.size(); j++){
+            for (int k = j+1 ; k< refLooseMuons.size(); k++){
+                    int passMu17Mu8andMatched = (T_Event_HLT_Mu17_Mu8&&(
+                                                                        (T_Muon_HLT_Mu17_Mu8_Mu17Leg->at(refLooseMuons.at(j))&&T_Muon_HLT_Mu17_Mu8_Mu8Leg->at(refLooseMuons.at(k)))
+                                                                        ||
+                                                                        (T_Muon_HLT_Mu17_Mu8_Mu17Leg->at(refLooseMuons.at(k))&&T_Muon_HLT_Mu17_Mu8_Mu8Leg->at(refLooseMuons.at(j)))
+                                                                        )
+                                                 );
+                    h_Mu17_Mu8_withMatch->Fill(passMu17Mu8andMatched);
         
-        int passMu17TkMu8andMatched = (T_Event_HLT_Mu17_TkMu8&&(
-                                                            (T_Muon_HLT_Mu17_TkMu8_Mu17Leg->at(refLooseMuons.at(0))&&T_Muon_HLT_Mu17_TkMu8_Mu8Leg->at(refLooseMuons.at(1)))
-                                                            ||
-                                                            (T_Muon_HLT_Mu17_TkMu8_Mu17Leg->at(refLooseMuons.at(1))&&T_Muon_HLT_Mu17_TkMu8_Mu8Leg->at(refLooseMuons.at(0)))
-                                                            )
-                                     );
-        h_Mu17_TkMu8_withMatch->Fill(passMu17TkMu8andMatched);
+                    int passMu17TkMu8andMatched = (T_Event_HLT_Mu17_TkMu8&&(
+                                                                            (T_Muon_HLT_Mu17_TkMu8_Mu17Leg->at(refLooseMuons.at(j))&&T_Muon_HLT_Mu17_TkMu8_Mu8Leg->at(refLooseMuons.at(k)))
+                                                                            ||
+                                                                            (T_Muon_HLT_Mu17_TkMu8_Mu17Leg->at(refLooseMuons.at(k))&&T_Muon_HLT_Mu17_TkMu8_Mu8Leg->at(refLooseMuons.at(j)))
+                                                                            )
+                                                   );
+                    h_Mu17_TkMu8_withMatch->Fill(passMu17TkMu8andMatched);
+            }
+        }
     }
     
+    
+    cout << "Mu17_Mu8=" << h_Mu17_Mu8->GetMean() << " +- " << h_Mu17_Mu8->GetMeanError() << endl;
+    cout << "Mu17_TkMu8=" << h_Mu17_TkMu8->GetMean() << " +- " << h_Mu17_TkMu8->GetMeanError() << endl;
+    
+    cout << "after matching:" << endl;
+    cout << "Mu17_Mu8=" << h_Mu17_Mu8_withMatch->GetMean() << " +- " << h_Mu17_Mu8_withMatch->GetMeanError() << endl;
+    cout << "Mu17_TkMu8=" << h_Mu17_TkMu8_withMatch->GetMean() << " +- " << h_Mu17_TkMu8_withMatch->GetMeanError() << endl;
     
     outputFile->Write();
     outputFile->Close();
