@@ -19,11 +19,12 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.source = cms.Source(
                             "PoolSource",
                             fileNames = cms.untracked.vstring(
-								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_1.root',
-								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_2.root',
-								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_3.root',
-								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_4.root',
-								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_5.root',
+								'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/fileRunD/reco_file.root'
+#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_1.root',
+#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_2.root',
+#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_3.root',
+#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_4.root',
+#								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/files/MC_DY_5.root',
 #								'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/fileRunD/reco_file.root'
                                                               #								'file:/sps/cms/hbrun/CMSSW_5_3_7_myCode/src/dataFile_runA/theFile.root'
 #                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
@@ -40,7 +41,7 @@ process.source = cms.Source(
 
 
 process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
-                                     isMC               = cms.bool(True),
+                                     isMC               = cms.bool(False),
                                      muonProducer 		= cms.VInputTag(cms.InputTag("muons")),
                                      TriggerResults          = cms.InputTag("TriggerResults", "", "HLT"),
                                      HLTTriggerSummaryAOD    = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),

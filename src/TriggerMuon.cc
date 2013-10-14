@@ -145,7 +145,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     T_Event_HLT_IsoMu24_2p1 =         triggerResults->accept(theBitCorr[4]);
     //cout << "inRunD_" << inRunD_ << endl;
     //cout << "theBitCorr" << theBitCorr.size() << endl;
-    T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned = triggerResults->accept(theBitCorr[5]);
+/*    T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned = triggerResults->accept(theBitCorr[5]);
     T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07 = triggerResults->accept(theBitCorr[6]);
    // T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80 = triggerResults->accept(theBitCorr[9]);
     T_Event_HLT_DiPFJet40_PFMETnoMu65_MJJ600VBF_LeadingJets = triggerResults->accept(theBitCorr[7]);
@@ -161,7 +161,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //T_Event_HLT_MonoCentralPFJet80_PFMETnoMu105_NHEF0p95 = triggerResults->accept(theBitCorr[20]);
     T_Event_HLT_PFMET150 = triggerResults->accept(theBitCorr[17]);
     T_Event_HLT_PFMET180 = triggerResults->accept(theBitCorr[18]);
-    
+  */  
     
     if (inRunD_){
         T_Event_HLT_Mu17_TkMu8_NoDZ =         triggerResults->accept(theBitCorr[5]);
@@ -196,7 +196,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     int nbMuons = recoMuons->size();
     for (int k = 0 ; k < nbMuons ; k++){// loop on the muons in the event
         const reco::Muon* muon = &((*recoMuons)[k]);
-        cout << "muon PT =" << muon->pt() << endl; 
+      //  cout << "muon PT =" << muon->pt() << endl; 
         T_Muon_Eta->push_back(muon->eta());
         T_Muon_Phi->push_back(muon->phi());
         T_Muon_IsGlobalMuon->push_back(muon->isGlobalMuon());
@@ -358,6 +358,7 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Event_HLT_IsoMu24",&T_Event_HLT_IsoMu24,"T_Event_HLT_IsoMu24/I");
     mytree_->Branch("T_Event_HLT_IsoMu24_2p1",&T_Event_HLT_IsoMu24_2p1,"T_Event_HLT_IsoMu24_2p1/I");
     mytree_->Branch("T_Event_HLT_Mu17_TkMu8_NoDZ",&T_Event_HLT_Mu17_TkMu8_NoDZ,"T_Event_HLT_Mu17_TkMu8_NoDZ/I");
+    mytree_->Branch("T_Event_HLT_Mu13_Mu8_NoDZ",&T_Event_HLT_Mu13_Mu8_NoDZ,"T_Event_HLT_Mu13_Mu8_NoDZ/I");
     mytree_->Branch("T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned",&T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned,"T_Event_HLT_DiCentralJetSumpT100_dPhi05_DiCentralPFJet60_25_PFMET100_HBHENoiseCleaned/I");
     mytree_->Branch("T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07",&T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07,"T_Event_HLT_DiCentralPFJet30_PFMET80_BTagCSV07/I");
     mytree_->Branch("T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80",&T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80,"T_Event_HLT_DiCentralPFNoPUJet50_PFMETORPFMETNoMu80/I");
