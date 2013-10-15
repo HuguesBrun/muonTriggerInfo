@@ -42,7 +42,7 @@ process.source = cms.Source(
 
 
 process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
-                                     isMC               = cms.bool(False),
+                                     isMC               = cms.bool(True),
                                      muonProducer 		= cms.VInputTag(cms.InputTag("muons")),
                                      TriggerResults          = cms.InputTag("TriggerResults", "", "HLT"),
                                      HLTTriggerSummaryAOD    = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),

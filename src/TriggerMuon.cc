@@ -125,7 +125,8 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
     }
     
-    //fill event variables : 
+    //fill event variables :
+    //cout << "event="  << iEvent.id().run() << endl;
     T_Event_RunNumber = iEvent.id().run();
     T_Event_EventNumber = iEvent.id().event();
     T_Event_LuminosityBlock = iEvent.id().luminosityBlock();
@@ -147,66 +148,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         T_Muon_Pz->push_back(muon->pz());
         T_Muon_Mass->push_back(muon->mass());
         
-  
-        if (isMC_){
-            // now do the matching with the gen particles : 
-            int nbOfGen = genParticles->size();
-            float minDiff= 100;
-            int iteDiff = -1000;
-            int motherID = 0;
-            for (int m = 0 ; m < nbOfGen ; m++){//loop on the gen particles
-                const reco::GenParticle & p = (*genParticles)[m];
-                float theDeltaR = deltaR(p.phi(), muon->phi(), p.eta(), muon->eta());
-                if (theDeltaR > 0.2) continue;
-                if (!(p.status()==1)) continue;
-                if (fabs(p.pdgId())!=13) continue; // found a stable gen muon matching with the reco muon
-                const reco::Candidate * theLocalCandidate = &p;
-                bool hasMother = (theLocalCandidate->numberOfMothers()>0);
-                const reco::Candidate * theMother;
-                while (hasMother) {//check if the muon has a Z in its mother particles
-                    theMother = theLocalCandidate->mother();
-                    theLocalCandidate = theMother;
-                    hasMother = (theLocalCandidate->numberOfMothers()>0);
-                    motherID = theMother->pdgId();
-                    if ((theMother->pdgId()==23)||(theMother->pdgId()==22)) break;
-                }
-                minDiff = theDeltaR; // save the deltaR between the gen part and the reco muon
-                iteDiff = m;
-            }
-            
-            
-            if (iteDiff>=0) {//save in the tree all the infos on the gen particles 
-                const reco::GenParticle & theCand = (*genParticles)[iteDiff];
-                const reco::Candidate * mom = theCand.mother();
-                if (theCand.numberOfMothers()>0) mom = theCand.mother();
-                T_Gen_Muon_Px->push_back(theCand.px());
-                T_Gen_Muon_Py->push_back(theCand.py());
-                T_Gen_Muon_Pz->push_back(theCand.pz());
-                T_Gen_Muon_Energy->push_back(theCand.energy());
-                T_Gen_Muon_MCpart->push_back(1);
-                T_Gen_Muon_PDGid->push_back(theCand.pdgId());
-                T_Gen_Muon_status->push_back(theCand.status());
-                if (theCand.numberOfMothers()>0) T_Gen_Muon_MotherID->push_back(motherID);
-                else T_Gen_Muon_MotherID->push_back(-1);
-                T_Gen_Muon_deltaR->push_back(minDiff);
-            }
-            else{  // -1 if not matching gen particle found ...
-                T_Gen_Muon_Px->push_back(-1);
-                T_Gen_Muon_Py->push_back(-1);
-                T_Gen_Muon_Pz->push_back(-1);
-                T_Gen_Muon_Energy->push_back(-1);
-                T_Gen_Muon_MCpart->push_back(0);
-                T_Gen_Muon_PDGid->push_back(-1);
-                T_Gen_Muon_status->push_back(-1);
-                T_Gen_Muon_MotherID->push_back(-1);  
-                T_Gen_Muon_deltaR->push_back(-1);
-                
-            }
-            
-        
-        
-        
-    }
+    
         
         int pass_HLT_Mu17_Mu8_Mu17Leg = 0;
         int pass_HLT_Mu17_Mu8_Mu8Leg = 0;
@@ -230,6 +172,40 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         T_Muon_HLT_Mu17_TkMu8_Mu17Leg->push_back(pass_HLT_Mu17_TkMu8_Mu17Leg);
         T_Muon_HLT_Mu17_TkMu8_Mu8Leg->push_back(pass_HLT_Mu17_TkMu8_Mu8Leg);
 
+    }
+    // now save the gen particles 
+    if (isMC_){
+        // now do the matching with the gen particles :
+        int nbOfGen = genParticles->size();
+        float minDiff= 100;
+        int iteDiff = -1000;
+        int motherID = 0;
+        for (int m = 0 ; m < nbOfGen ; m++){//loop on the gen particles
+            const reco::GenParticle & p = (*genParticles)[m];
+            if (!(p.status()==1)) continue;
+            if (fabs(p.pdgId())!=13) continue; // found a stable gen muon
+            const reco::Candidate * theLocalCandidate = &p;
+            bool hasMother = (theLocalCandidate->numberOfMothers()>0);
+            const reco::Candidate * theMother;
+            while (hasMother) {//check if the muon has a Z in its mother particles
+                theMother = theLocalCandidate->mother();
+                theLocalCandidate = theMother;
+                hasMother = (theLocalCandidate->numberOfMothers()>0);
+                motherID = theMother->pdgId();
+                if ((theMother->pdgId()==23)||(theMother->pdgId()==22)) break;
+            }
+            //save the gen particle
+            T_Gen_Muon_Px->push_back(p.px());
+            T_Gen_Muon_Py->push_back(p.py());
+            T_Gen_Muon_Pz->push_back(p.pz());
+            T_Gen_Muon_Energy->push_back(p.energy());
+            T_Gen_Muon_MCpart->push_back(1);
+            T_Gen_Muon_PDGid->push_back(p.pdgId());
+            T_Gen_Muon_status->push_back(p.status());
+            if (p.numberOfMothers()>0) T_Gen_Muon_MotherID->push_back(motherID);
+            else T_Gen_Muon_MotherID->push_back(-1);
+
+        }
     }
     //save now HLT objects !
     for (size_t t = 0 ; t < selectedObjects.size() ; t++){
