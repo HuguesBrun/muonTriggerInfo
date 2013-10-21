@@ -59,7 +59,10 @@ computeTheTriggerEff(){
     int nbEntries = chain->GetEntries();
     
     cout << "nbEntries=" << nbEntries << endl;
-    
+    int nbEventPassingGenCut=0;
+    int nbEventWith2SelectedMuon=0;
+    int nbEventPassingMu17Mu8=0;
+    int nbEventPassingMu17TkMu8=0;
     for (int i = 0 ; i<nbEntries ; i++){
         if (i%1000==0) cout << "event number " << i << endl;
   
@@ -82,7 +85,7 @@ computeTheTriggerEff(){
         }
        // cout << "nb nbZ genmuons=" << nbPairMuonsFromZ << endl;
         if (!(nbPairMuonsFromZ>=1)) continue; // if not Z->mu mu gen event then go to next event
-        
+        nbEventPassingGenCut++;
         
         
         int nbMuons = T_Muon_Pt->size();
@@ -96,10 +99,12 @@ computeTheTriggerEff(){
         }
         //cout << "nb Loose muons=" << nbLooseMuons << endl;
         if (!(nbLooseMuons>=2)) continue;
-        
+        nbEventWith2SelectedMuon++;
         // fill the trigger paths histos ! 
         h_Mu17_Mu8->Fill(T_Event_HLT_Mu17_Mu8);
         h_Mu17_TkMu8->Fill(T_Event_HLT_Mu17_TkMu8);
+        nbEventPassingMu17Mu8+=T_Event_HLT_Mu17_Mu8;
+        nbEventPassingMu17TkMu8+=T_Event_HLT_Mu17_TkMu8;
         
         
         //fill the trigger paths after match:
@@ -131,6 +136,12 @@ computeTheTriggerEff(){
     cout << "after matching:" << endl;
     cout << "Mu17_Mu8=" << h_Mu17_Mu8_withMatch->GetMean() << " +- " << h_Mu17_Mu8_withMatch->GetMeanError() << endl;
     cout << "Mu17_TkMu8=" << h_Mu17_TkMu8_withMatch->GetMean() << " +- " << h_Mu17_TkMu8_withMatch->GetMeanError() << endl;
+    
+    
+    cout << "nbEventAfterGEN=" << nbEventPassingGenCut << endl;
+    cout << "nbEvent2selectedMuons=" << nbEventWith2SelectedMuon << endl;
+    cout << "nbEventPassing Mu17Mu8=" << nbEventPassingMu17Mu8 << endl;
+    cout << "nbEventPassing Mu17TkMu8=" << nbEventPassingMu17TkMu8 << endl;
     
     outputFile->Write();
     outputFile->Close();
