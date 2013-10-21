@@ -80,7 +80,7 @@ computeTheTriggerEff(){
 
             }
         }
-        cout << "nb nbZ genmuons=" << nbPairMuonsFromZ << endl;
+       // cout << "nb nbZ genmuons=" << nbPairMuonsFromZ << endl;
         if (!(nbPairMuonsFromZ>=1)) continue; // if not Z->mu mu gen event then go to next event
         
         
@@ -94,7 +94,7 @@ computeTheTriggerEff(){
             refLooseMuons.push_back(j);
             nbLooseMuons++;
         }
-        cout << "nb Loose muons=" << nbLooseMuons << endl;
+        //cout << "nb Loose muons=" << nbLooseMuons << endl;
         if (!(nbLooseMuons>=2)) continue;
         
         // fill the trigger paths histos ! 
