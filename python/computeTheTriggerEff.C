@@ -67,7 +67,6 @@ computeTheTriggerEff(){
         if (i%1000==0) cout << "event number " << i << endl;
   
         chain->GetEntry(i);
-        if (T_Muon_Pt->size()<2) continue; //need at least 2 muons in the event...
    
     
         
@@ -84,10 +83,11 @@ computeTheTriggerEff(){
             }
         }
        // cout << "nb nbZ genmuons=" << nbPairMuonsFromZ << endl;
-        if (!(nbPairMuonsFromZ>=1)) continue; // if not Z->mu mu gen event then go to next event
+        //if (!(nbPairMuonsFromZ>=1)) continue; // if not Z->mu mu gen event then go to next event
         nbEventPassingGenCut++;
         
         
+        if (T_Muon_Pt->size()<2) continue; //need at least 2 muons in the event...
         int nbMuons = T_Muon_Pt->size();
         int nbLooseMuons = 0;
          std::vector<int> refLooseMuons = 0;
