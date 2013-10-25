@@ -1,13 +1,32 @@
 import FWCore.ParameterSet.Config as cms
 
+savePatInTree=False;
+
 process = cms.Process("EX")
 process.load("Configuration.StandardSequences.Services_cff")
 process.load("Configuration.Geometry.GeometryIdeal_cff")
 process.load('Configuration/StandardSequences/MagneticField_38T_cff')
 process.load('Configuration/StandardSequences/FrontierConditions_GlobalTag_cff')
 process.load("Configuration.StandardSequences.Reconstruction_cff")
+
+# try to add the PAT PF sequences in the analyser...
+## import skeleton process
+from PhysicsTools.PatAlgos.patTemplate_cfg import *
+
+# load the PAT config
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
+from PhysicsTools.PatAlgos.tools.pfTools import *
+postfix = "PFlow"
+jetAlgo="AK5"
+if savePatInTree: usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix)
+
+
+
+
+
+
 process.GlobalTag.globaltag = 'START53_V7A::All'
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 #
@@ -19,17 +38,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.source = cms.Source(
                             "PoolSource",
                             fileNames = cms.untracked.vstring(
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_1_1_EkA.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_2_1_Toe.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_3_1_Lu4.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_4_1_un5.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_5_1_J2H.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_6_1_Rp7.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_7_1_XVZ.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_8_1_D9w.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_9_1_AHt.root',
-                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_10_1_z3g.root'
-                                                              ),
+                                'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
+                                                             ),
                             secondaryFileNames = cms.untracked.vstring(),
                             noEventSort = cms.untracked.bool(True),
                             duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
@@ -39,6 +49,7 @@ process.source = cms.Source(
 
 process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
                                      isMC               = cms.bool(True),
+                                     doPFPATmatching    = cms.bool(False),
                                      muonProducer 		= cms.VInputTag(cms.InputTag("muons")),
                                      TriggerResults          = cms.InputTag("TriggerResults", "", "HLT"),
                                      HLTTriggerSummaryAOD    = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),
@@ -66,8 +77,27 @@ process.triggerResultsFilter.l1tResults = ''
 process.triggerResultsFilter.throw = False
 process.triggerResultsFilter.hltResults = cms.InputTag( "TriggerResults", "", "HLT" )
 
-#process.p = cms.Path(process.triggerResultsFilter+process.goodVertexFilter + process.noScraping+process.triggerMuon)
-process.p = cms.Path(process.goodVertexFilter + process.noScraping+process.triggerMuon)
+if savePatInTree:
+    # top projections in PF2PAT:
+    getattr(process,"pfNoPileUp"+postfix).enable = True
+    getattr(process,"pfNoMuon"+postfix).enable = True
+    getattr(process,"pfNoElectron"+postfix).enable = True
+    getattr(process,"pfNoTau"+postfix).enable = False
+    getattr(process,"pfNoJet"+postfix).enable = True
+    
+    # verbose flags for the PF2PAT modules
+    getattr(process,"pfNoMuon"+postfix).verbose = False
+    
+    #ask the analyzer to
+    getattr(process,"triggerMuon").doPFPATmatching = True
+
+
+if savePatInTree:
+    #sequence with PF
+    process.p = cms.Path(process.goodVertexFilter * process.noScraping * getattr(process,"patPF2PATSequence"+postfix)*process.triggerMuon)
+else:
+    #sequence without PF
+    process.p = cms.Path(process.goodVertexFilter * process.noScraping * process.triggerMuon)
 
 
 

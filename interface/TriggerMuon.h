@@ -47,6 +47,8 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
+#include "DataFormats/PatCandidates/interface/Muon.h"
+
 // ROOT stuff !
 #include "TH1D.h"
 #include <map>
@@ -93,6 +95,7 @@ class TriggerMuon : public edm::EDAnalyzer {
     // input tags
     
     bool isMC_;
+    bool doPFPATmatching_;
 
     edm::InputTag               triggerResultsLabel_;
     edm::InputTag               triggerSummaryLabel_;
@@ -165,6 +168,17 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<bool> *T_Muon_HLT_Mu17_Mu8_Mu8Leg;
     std::vector<bool> *T_Muon_HLT_Mu17_TkMu8_Mu17Leg;
     std::vector<bool> *T_Muon_HLT_Mu17_TkMu8_Mu8Leg;
+    
+    //PAT information
+    std::vector<int>*T_Muon_isMatchWithPAT;
+    std::vector<float>*T_Muon_PATpt;
+    std::vector<float>*T_Muon_PATeta;
+    std::vector<float>*T_Muon_PATphi;
+    std::vector<float>*T_Muon_PATenergy;
+    std::vector<float>*T_Muon_PATpx;
+    std::vector<float>*T_Muon_PATpy;
+    std::vector<float>*T_Muon_PATpz;
+
     
     
     

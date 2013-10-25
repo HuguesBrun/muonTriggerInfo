@@ -7,6 +7,7 @@ TriggerMuon::TriggerMuon(const edm::ParameterSet& iConfig)
 {
     
     isMC_                   = iConfig.getParameter<bool>("isMC");
+    doPFPATmatching_        = iConfig.getParameter<bool>("doPFPATmatching");
     
     triggerResultsLabel_    = iConfig.getParameter<edm::InputTag>("TriggerResults");
     triggerSummaryLabel_    = iConfig.getParameter<edm::InputTag>("HLTTriggerSummaryAOD");
@@ -74,6 +75,11 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     
     edm::Handle <reco::GenParticleCollection> genParticles;
     
+    // read the PAT muons
+    edm::Handle<pat::MuonCollection > patMuons;
+    if (doPFPATmatching_) iEvent.getByLabel( "selectedPatMuonsPFlow", patMuons );
+    
+
     
     if (isMC_){// get the gen infos
         edm::Handle<GenEventInfoProduct> genEvent;
@@ -131,6 +137,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     T_Event_EventNumber = iEvent.id().event();
     T_Event_LuminosityBlock = iEvent.id().luminosityBlock();
 
+    
     int nbMuons = recoMuons->size();
     for (int k = 0 ; k < nbMuons ; k++){// loop on the muons in the event
         const reco::Muon* muon = &((*recoMuons)[k]);
@@ -171,6 +178,24 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         T_Muon_HLT_Mu17_Mu8_Mu8Leg->push_back(pass_HLT_Mu17_Mu8_Mu8Leg);
         T_Muon_HLT_Mu17_TkMu8_Mu17Leg->push_back(pass_HLT_Mu17_TkMu8_Mu17Leg);
         T_Muon_HLT_Mu17_TkMu8_Mu8Leg->push_back(pass_HLT_Mu17_TkMu8_Mu8Leg);
+        
+        
+        /// try the matching with the PAT PF muons
+        T_Muon_isMatchWithPAT->push_back(0);
+        if (doPFPATmatching_){
+            for( size_t iMuon = 0; iMuon < patMuons->size(); ++iMuon ) {
+                float drPF = deltaR(muon->phi(), patMuons->at( iMuon ).phi(), muon->eta(),patMuons->at( iMuon ).eta());
+                if (drPF>0.1) continue;
+                T_Muon_isMatchWithPAT->push_back(1);
+                T_Muon_PATpt->push_back(patMuons->at( iMuon ).pt());
+                T_Muon_PATeta->push_back(patMuons->at( iMuon ).eta());
+                T_Muon_PATphi->push_back(patMuons->at( iMuon ).phi());
+                T_Muon_PATenergy->push_back(patMuons->at( iMuon ).energy());
+                T_Muon_PATpx->push_back(patMuons->at( iMuon ).px());
+                T_Muon_PATpy->push_back(patMuons->at( iMuon ).py());
+                T_Muon_PATpz->push_back(patMuons->at( iMuon ).pz());
+            }
+        }
 
     }
     // now save the gen particles 
@@ -280,6 +305,18 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Muon_photonIsoR03", "std::vector<float>", &T_Muon_photonIsoR03);
     mytree_->Branch("T_Muon_chargedHadronIsoPUR03", "std::vector<float>", &T_Muon_chargedHadronIsoPUR03);
     
+    if (doPFPATmatching_){
+        mytree_->Branch("T_Muon_isMatchWithPAT", "std::vector<int>", &T_Muon_isMatchWithPAT);
+        mytree_->Branch("T_Muon_PATpt", "std::vector<float>", &T_Muon_PATpt);
+        mytree_->Branch("T_Muon_PATeta", "std::vector<float>", &T_Muon_PATeta);
+        mytree_->Branch("T_Muon_PATphi", "std::vector<float>", &T_Muon_PATphi);
+        mytree_->Branch("T_Muon_PATenergy", "std::vector<float>", &T_Muon_PATenergy);
+        mytree_->Branch("T_Muon_PATpx", "std::vector<float>", &T_Muon_PATpx);
+        mytree_->Branch("T_Muon_PATpy", "std::vector<float>", &T_Muon_PATpy);
+        mytree_->Branch("T_Muon_PATpz", "std::vector<float>", &T_Muon_PATpz);
+    }
+
+    
     mytree_->Branch("T_Muon_HLT_Mu17_Mu8_Mu17Leg", "std::vector<bool>", &T_Muon_HLT_Mu17_Mu8_Mu17Leg);
     mytree_->Branch("T_Muon_HLT_Mu17_Mu8_Mu8Leg", "std::vector<bool>", &T_Muon_HLT_Mu17_Mu8_Mu8Leg);
     mytree_->Branch("T_Muon_HLT_Mu17_TkMu8_Mu17Leg", "std::vector<bool>", &T_Muon_HLT_Mu17_TkMu8_Mu17Leg);
@@ -363,6 +400,17 @@ TriggerMuon::beginEvent()
     T_Muon_photonIsoR03 = new std::vector<float>;
     T_Muon_chargedHadronIsoPUR03 = new std::vector<float>;
     
+    T_Muon_isMatchWithPAT = new std::vector<int>;
+    T_Muon_PATpt = new std::vector<float>;
+    T_Muon_PATeta = new std::vector<float>;
+    T_Muon_PATphi = new std::vector<float>;
+    T_Muon_PATenergy = new std::vector<float>;
+    T_Muon_PATpx = new std::vector<float>;
+    T_Muon_PATpy = new std::vector<float>;
+    T_Muon_PATpz = new std::vector<float>;
+
+    
+    
     T_Muon_HLT_Mu17_Mu8_Mu17Leg = new std::vector<bool>;
     T_Muon_HLT_Mu17_Mu8_Mu8Leg = new std::vector<bool>;
     T_Muon_HLT_Mu17_TkMu8_Mu17Leg = new std::vector<bool>;
@@ -409,6 +457,17 @@ TriggerMuon::endEvent()
 	delete T_Muon_neutralHadronIsoR03;
 	delete T_Muon_photonIsoR03;
 	delete T_Muon_chargedHadronIsoPUR03;
+
+    delete T_Muon_isMatchWithPAT;
+    delete T_Muon_PATpt;
+    delete T_Muon_PATeta;
+    delete T_Muon_PATphi;
+    delete T_Muon_PATenergy;
+    delete T_Muon_PATpx;
+    delete T_Muon_PATpy;
+    delete T_Muon_PATpz;
+
+    
     
     delete T_Muon_HLT_Mu17_Mu8_Mu17Leg;
     delete T_Muon_HLT_Mu17_Mu8_Mu8Leg;
