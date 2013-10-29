@@ -181,11 +181,12 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         
         
         /// try the matching with the PAT PF muons
-        T_Muon_isMatchWithPAT->push_back(0);
+	int isPAT_PFmuon = 0; 
         if (doPFPATmatching_){
             for( size_t iMuon = 0; iMuon < patMuons->size(); ++iMuon ) {
                 float drPF = deltaR(muon->phi(), patMuons->at( iMuon ).phi(), muon->eta(),patMuons->at( iMuon ).eta());
                 if (drPF>0.1) continue;
+		isPAT_PFmuon = 1; 
                 T_Muon_isMatchWithPAT->push_back(1);
                 T_Muon_PATpt->push_back(patMuons->at( iMuon ).pt());
                 T_Muon_PATeta->push_back(patMuons->at( iMuon ).eta());
@@ -196,6 +197,8 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 T_Muon_PATpz->push_back(patMuons->at( iMuon ).pz());
             }
         }
+	if (isPAT_PFmuon==0) T_Muon_isMatchWithPAT->push_back(0);
+
 
     }
     // now save the gen particles 
