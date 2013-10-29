@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-savePatInTree=False;
+savePatInTree=True;
 
 process = cms.Process("EX")
 process.load("Configuration.StandardSequences.Services_cff")
@@ -26,7 +26,7 @@ if savePatInTree: usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=Tru
 
 
 process.GlobalTag.globaltag = 'START53_V7A::All'
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 #
@@ -38,7 +38,16 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.source = cms.Source(
                             "PoolSource",
                             fileNames = cms.untracked.vstring(
-                                'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_1_1_EkA.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_2_1_Toe.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_3_1_Lu4.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_4_1_un5.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_5_1_J2H.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_6_1_Rp7.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_7_1_XVZ.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_8_1_D9w.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_9_1_AHt.root',
+                                '/store/user/hbrun/DYtoLLfiles/MYCOPY_10_1_z3g.root'
                                                              ),
                             secondaryFileNames = cms.untracked.vstring(),
                             noEventSort = cms.untracked.bool(True),
