@@ -82,8 +82,10 @@ if savePatInTree:
     getattr(process,"pfNoPileUp"+postfix).enable = True
     getattr(process,"pfNoMuon"+postfix).enable = True
     getattr(process,"pfNoElectron"+postfix).enable = True
+    
+    # tau considered as jet
     getattr(process,"pfNoTau"+postfix).enable = False
-    getattr(process,"pfNoJet"+postfix).enable = True
+    getattr(process,"pfNoJet"+postfix).enable = False
     
     # verbose flags for the PF2PAT modules
     getattr(process,"pfNoMuon"+postfix).verbose = False
@@ -91,9 +93,12 @@ if savePatInTree:
     #ask the analyzer to
     getattr(process,"triggerMuon").doPFPATmatching = True
 
+
+
 #all pfMuons considered as isolated
 process.pfIsolatedMuonsPFlow.combinedIsolationCut = cms.double(9999.)
 process.pfIsolatedMuonsPFlow.isolationCut = cms.double(9999.)
+process.pfSelectedMuonsPFlow.cut = cms.string("pt>5")
 
 #all pfElectrons considered as isolated
 process.pfIsolatedElectronsPFlow.combinedIsolationCut = cms.double(9999.)
