@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-savePatInTree=False;
+savePatInTree=True;
 
 process = cms.Process("EX")
 process.load("Configuration.StandardSequences.Services_cff")
@@ -90,6 +90,14 @@ if savePatInTree:
     
     #ask the analyzer to
     getattr(process,"triggerMuon").doPFPATmatching = True
+
+#all pfMuons considered as isolated
+process.pfIsolatedMuonsPFlow.combinedIsolationCut = cms.double(9999.)
+process.pfIsolatedMuonsPFlow.isolationCut = cms.double(9999.)
+
+#all pfElectrons considered as isolated
+process.pfIsolatedElectronsPFlow.combinedIsolationCut = cms.double(9999.)
+process.pfIsolatedElectronsPFlow.isolationCut = cms.double(9999.)
 
 
 if savePatInTree:
