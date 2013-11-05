@@ -138,9 +138,9 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     T_Event_LuminosityBlock = iEvent.id().luminosityBlock();
 
     
-    int nbMuons = recoMuons->size();
+    int nbMuons = patMuons->size();
     for (int k = 0 ; k < nbMuons ; k++){// loop on the muons in the event
-        const reco::Muon* muon = &((*recoMuons)[k]);
+        const pat::Muon* muon = &((*patMuons)[k]);
       //  cout << "muon PT =" << muon->pt() << endl; 
         T_Muon_Eta->push_back(muon->eta());
         T_Muon_Phi->push_back(muon->phi());
