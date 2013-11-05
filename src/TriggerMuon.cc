@@ -186,8 +186,8 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             for( size_t iMuon = 0; iMuon < patMuons->size(); ++iMuon ) {
                 float drPF = deltaR(muon->phi(), patMuons->at( iMuon ).phi(), muon->eta(),patMuons->at( iMuon ).eta());
                 if (drPF>0.1) continue;
-		isPAT_PFmuon = 1; 
                 T_Muon_isMatchWithPAT->push_back(1);
+		foundAElectronPfMatch = true;
                 T_Muon_PATpt->push_back(patMuons->at( iMuon ).pt());
                 T_Muon_PATeta->push_back(patMuons->at( iMuon ).eta());
                 T_Muon_PATphi->push_back(patMuons->at( iMuon ).phi());

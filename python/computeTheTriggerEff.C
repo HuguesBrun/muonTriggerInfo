@@ -35,11 +35,11 @@ computeTheTriggerEff(){
     chain->SetBranchAddress("T_Muon_IsGlobalMuon",&T_Muon_IsGlobalMuon);
     chain->SetBranchAddress("T_Muon_IsTrackerMuon",&T_Muon_IsTrackerMuon);
     chain->SetBranchAddress("T_Muon_IsPFMuon",&T_Muon_IsPFMuon);
+    chain->SetBranchAddress("T_Muon_isMatchWithPAT",&T_Muon_isMatchWithPAT);
     
     chain->SetBranchAddress("T_Gen_Muon_Energy",&T_Gen_Muon_Energy);
     chain->SetBranchAddress("T_Gen_Muon_PDGid",&T_Gen_Muon_PDGid);
     chain->SetBranchAddress("T_Gen_Muon_MotherID",&T_Gen_Muon_MotherID);
-    chain->SetBranchAddress("T_Muon_isMatchWithPAT",&T_Muon_isMatchWithPAT);
 
     chain->SetBranchAddress("T_Muon_HLT_Mu17_Mu8_Mu17Leg",&T_Muon_HLT_Mu17_Mu8_Mu17Leg);
     chain->SetBranchAddress("T_Muon_HLT_Mu17_Mu8_Mu8Leg",&T_Muon_HLT_Mu17_Mu8_Mu8Leg);
