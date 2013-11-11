@@ -10,6 +10,7 @@ std::vector<float> *T_Gen_Muon_Energy;
 std::vector<bool> *T_Muon_IsGlobalMuon;
 std::vector<bool> *T_Muon_IsTrackerMuon;
 std::vector<bool> *T_Muon_IsPFMuon;
+std::vector<int> *T_Muon_isMatchWithPAT;
 
 std::vector<int>*T_Gen_Muon_PDGid;
 std::vector<int>*T_Gen_Muon_MotherID;
@@ -34,6 +35,7 @@ computeTheTriggerEff(){
     chain->SetBranchAddress("T_Muon_IsGlobalMuon",&T_Muon_IsGlobalMuon);
     chain->SetBranchAddress("T_Muon_IsTrackerMuon",&T_Muon_IsTrackerMuon);
     chain->SetBranchAddress("T_Muon_IsPFMuon",&T_Muon_IsPFMuon);
+    chain->SetBranchAddress("T_Muon_isMatchWithPAT",&T_Muon_isMatchWithPAT);
     
     chain->SetBranchAddress("T_Gen_Muon_Energy",&T_Gen_Muon_Energy);
     chain->SetBranchAddress("T_Gen_Muon_PDGid",&T_Gen_Muon_PDGid);
@@ -93,7 +95,7 @@ computeTheTriggerEff(){
          std::vector<int> refLooseMuons = 0;
         for (int j = 0 ; j < nbMuons ; j++){
             if (!((T_Muon_Pt->at(j)>20)&&(fabs(T_Muon_Eta->at(j))<2.4))) continue;
-            if (!((T_Muon_IsGlobalMuon->at(j)||T_Muon_IsTrackerMuon->at(j))&&(T_Muon_IsPFMuon->at(j)))) continue;
+            if (!((T_Muon_IsGlobalMuon->at(j)||T_Muon_IsTrackerMuon->at(j)))) continue;
             refLooseMuons.push_back(j);
             nbLooseMuons++;
         }
