@@ -15,10 +15,27 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # load the PAT config
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
+
+
+process.goodOfflinePrimaryVertices = cms.EDFilter("PrimaryVertexObjectFilter",
+                                                  filter = cms.bool(True),
+                                                  src = cms.InputTag("offlinePrimaryVertices"),
+                                                  filterParams = cms.PSet(
+                                                                          maxZ = cms.double(24.0),
+                                                                          minNdof = cms.double(4.0),
+                                                                          maxRho = cms.double(2.0)
+                                                                          )
+                                                  )
+
+jetCorr =('AK5PFchs', ['L1FastJet','L2Relative','L3Absolute'])
+
 from PhysicsTools.PatAlgos.tools.pfTools import *
+
+
+
 postfix = "PFlow"
 jetAlgo="AK5"
-if savePatInTree: usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix)
+if savePatInTree: usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix, jetCorrections=jetCorr, pvCollection=cms.InputTag('goodOfflinePrimaryVertices'),typeIMetCorrections=True)
 
 
 
@@ -56,6 +73,7 @@ process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
                                      outputFile		        = cms.string("muonTriggerTree.root"),
 )
 
+##### filter
 process.goodVertexFilter = cms.EDFilter("VertexSelector",
                                         src = cms.InputTag("offlinePrimaryVertices"),
                                         cut = cms.string("!isFake && ndof > 4 && abs(z) <= 25 && position.Rho <= 2"),
@@ -69,6 +87,8 @@ process.noScraping = cms.EDFilter("FilterOutScraping",
                                   )
 
 
+
+
 process.load("HLTrigger.HLTfilters.triggerResultsFilter_cfi")
 
 process.triggerResultsFilter.triggerConditions = cms.vstring( 'HLT_Mu17_Mu8_v*','HLT_Mu17_TkMu8_v*','HLT_Mu17_v*','HLT_Mu24_eta2p1_v*','HLT_Mu17_TkMu8_NoDZ_v*','HLT_Mu13_Mu8_NoDZ_v*')
@@ -79,9 +99,9 @@ process.triggerResultsFilter.hltResults = cms.InputTag( "TriggerResults", "", "H
 
 if savePatInTree:
     # top projections in PF2PAT:
-    getattr(process,"pfNoPileUp"+postfix).enable = True
-    getattr(process,"pfNoMuon"+postfix).enable = True
-    getattr(process,"pfNoElectron"+postfix).enable = True
+    getattr(process,"pfNoPileUp"+postfix).enable = False
+    getattr(process,"pfNoMuon"+postfix).enable = False
+    getattr(process,"pfNoElectron"+postfix).enable = False
     
     # tau considered as jet
     getattr(process,"pfNoTau"+postfix).enable = False
@@ -96,14 +116,19 @@ if savePatInTree:
 
 
 #all pfMuons considered as isolated
-process.pfIsolatedMuonsPFlow.combinedIsolationCut = cms.double(9999.)
-process.pfIsolatedMuonsPFlow.isolationCut = cms.double(9999.)
-process.pfSelectedMuonsPFlow.cut = cms.string("pt>5")
+#process.pfIsolatedMuonsPFlow.combinedIsolationCut = cms.double(99999)
+process.pfIsolatedMuonsPFlow.isolationCut = cms.double(99999)
+#process.pfSelectedMuonsPFlow.cut = cms.string("pt>5")
 
 #all pfElectrons considered as isolated
-process.pfIsolatedElectronsPFlow.combinedIsolationCut = cms.double(9999.)
-process.pfIsolatedElectronsPFlow.isolationCut = cms.double(9999.)
+#process.pfIsolatedElectronsPFlow.combinedIsolationCut = cms.double(99999)
+process.pfIsolatedElectronsPFlow.isolationCut = cms.double(99999)
 
+process.pfSelectedMuonsPFlow.cut = cms.string('pt>3')
+
+process.pfIsolatedMuonsPFlow.isolationCut = cms.double(99999)
+
+adaptPFIsoMuons(process,process.pfIsolatedMuonsPFlow,"PFlow", "03")
 
 if savePatInTree:
     #sequence with PF
