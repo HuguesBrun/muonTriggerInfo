@@ -132,7 +132,7 @@ adaptPFIsoMuons(process,process.pfIsolatedMuonsPFlow,"PFlow", "03")
 
 if savePatInTree:
     #sequence with PF
-    process.p = cms.Path(process.goodVertexFilter * process.noScraping * getattr(process,"patPF2PATSequence"+postfix)*process.triggerMuon)
+    process.p = cms.Path(process.goodVertexFilter * process.noScraping * process.goodOfflinePrimaryVertices * getattr(process,"patPF2PATSequence"+postfix)*process.triggerMuon)
 else:
     #sequence without PF
     process.p = cms.Path(process.goodVertexFilter * process.noScraping * process.triggerMuon)
