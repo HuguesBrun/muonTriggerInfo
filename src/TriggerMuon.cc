@@ -79,6 +79,10 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle<pat::MuonCollection > patMuons;
     if (doPFPATmatching_) iEvent.getByLabel( "selectedPatMuonsPFlow", patMuons );
     
+    Handle<reco::PFCandidateCollection> hPfCandProduct;
+    //iEvent.getByLabel("particleFlow", hPfCandProduct);
+    iEvent.getByLabel("pfAllMuonsPFlow", hPfCandProduct);
+    const reco::PFCandidateCollection &inPfCands = *(hPfCandProduct.product());
 
     
     if (isMC_){// get the gen infos
@@ -137,6 +141,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     T_Event_EventNumber = iEvent.id().event();
     T_Event_LuminosityBlock = iEvent.id().luminosityBlock();
 
+   // if (T_Event_EventNumber != 8291739) return;
     
     int nbMuons = recoMuons->size();
     for (int k = 0 ; k < nbMuons ; k++){// loop on the muons in the event
@@ -181,23 +186,51 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         
         
         /// try the matching with the PAT PF muons
-        bool foundAElectronPfMatch = false;
+        int bestMatching = -1;
+        float minDr = 100;
         if (doPFPATmatching_){
             for( size_t iMuon = 0; iMuon < patMuons->size(); ++iMuon ) {
                 float drPF = deltaR(muon->phi(), patMuons->at( iMuon ).phi(), muon->eta(),patMuons->at( iMuon ).eta());
-                if (drPF>0.1) continue;
-                T_Muon_isMatchWithPAT->push_back(1);
-                T_Muon_PATpt->push_back(patMuons->at( iMuon ).pt());
-                T_Muon_PATeta->push_back(patMuons->at( iMuon ).eta());
-                T_Muon_PATphi->push_back(patMuons->at( iMuon ).phi());
-                T_Muon_PATenergy->push_back(patMuons->at( iMuon ).energy());
-                T_Muon_PATpx->push_back(patMuons->at( iMuon ).px());
-                T_Muon_PATpy->push_back(patMuons->at( iMuon ).py());
-                T_Muon_PATpz->push_back(patMuons->at( iMuon ).pz());
+               // cout << "PF muon = " << patMuons->at( iMuon ).pt() << " eta=" << patMuons->at( iMuon ).eta() << endl;
+                if (drPF<minDr){
+                    bestMatching = iMuon;
+                    minDr = drPF;
+                }
+
             }
         }
-        if (!(foundAElectronPfMatch)) T_Muon_isMatchWithPAT->push_back(0);
+        if ((bestMatching==-1)&&(muon->isPFMuon()&&(muon->pt()>10))){
+            cout << "event=" << T_Event_EventNumber << endl;
+            cout << "muon:  pt=" << muon->pt() << " eta=" << muon->eta() << endl;
+            cout << "Coucou ! le muon il est pas matché" << endl;
+        }
+        if ((bestMatching>=0)&&minDr<0.1){
+            T_Muon_isMatchWithPAT->push_back(1);
+            T_Muon_PATpt->push_back(patMuons->at( bestMatching ).pt());
+            T_Muon_PATeta->push_back(patMuons->at( bestMatching ).eta());
+            T_Muon_PATphi->push_back(patMuons->at( bestMatching ).phi());
+            T_Muon_PATenergy->push_back(patMuons->at( bestMatching ).energy());
+            T_Muon_PATpx->push_back(patMuons->at( bestMatching ).px());
+            T_Muon_PATpy->push_back(patMuons->at( bestMatching ).py());
+            T_Muon_PATpz->push_back(patMuons->at( bestMatching ).pz());
+        }
+        else {
+            T_Muon_isMatchWithPAT->push_back(0);
+            T_Muon_PATpt->push_back(-1);
+            T_Muon_PATeta->push_back(-1);
+            T_Muon_PATphi->push_back(-1);
+            T_Muon_PATenergy->push_back(-1);
+            T_Muon_PATpx->push_back(-1);
+            T_Muon_PATpy->push_back(-1);
+            T_Muon_PATpz->push_back(-1);
+        }
 
+    	/*cout << "PF part = " << endl;
+    	for (reco::PFCandidateCollection::const_iterator iP = inPfCands.begin(); iP != inPfCands.end(); ++iP) {
+       		float drPFnew = deltaR(muon->phi(), iP->phi(), muon->eta(),iP->eta());
+       		if (drPFnew>0.1) continue;
+       		cout << "PF pt=" << iP->pt() << " eta=" << iP->eta() << " type=" << iP->pdgId() << endl;
+    	}*/
     }
     // now save the gen particles 
     if (isMC_){

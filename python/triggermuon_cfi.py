@@ -26,7 +26,7 @@ if savePatInTree: usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=Tru
 
 
 process.GlobalTag.globaltag = 'START53_V7A::All'
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 #
@@ -96,13 +96,16 @@ if savePatInTree:
 
 
 #all pfMuons considered as isolated
-process.pfIsolatedMuonsPFlow.combinedIsolationCut = cms.double(9999.)
-process.pfIsolatedMuonsPFlow.isolationCut = cms.double(9999.)
-process.pfSelectedMuonsPFlow.cut = cms.string("pt>5")
-
+process.pfIsolatedMuonsPFlow.isolationCut = cms.double(99999.)
+process.pfSelectedMuonsPFlow.cut = cms.string('pt>5')
+process.pfMuonsFromVertexPFlow.d0Cut = cms.double(99)
+process.pfMuonsFromVertexPFlow.dzCut = cms.double(99)
+process.pfMuonsFromVertexPFlow.d0SigCut = cms.double(9999999.)
+process.pfMuonsFromVertexPFlow.dzSigCut = cms.double(9999999.)
 #all pfElectrons considered as isolated
-process.pfIsolatedElectronsPFlow.combinedIsolationCut = cms.double(9999.)
-process.pfIsolatedElectronsPFlow.isolationCut = cms.double(9999.)
+process.pfIsolatedElectronsPFlow.combinedIsolationCut = cms.double(99999.)
+
+adaptPFIsoMuons(process,process.pfIsolatedMuonsPFlow,"PFlow", "03")
 
 
 if savePatInTree:
@@ -112,7 +115,7 @@ else:
     #sequence without PF
     process.p = cms.Path(process.goodVertexFilter * process.noScraping * process.triggerMuon)
 
-
-
+from CommonTools.ParticleFlow.PF2PAT_EventContent_cff import PF2PATStudiesEventContent
+process.out.outputCommands =  PF2PATStudiesEventContent.outputCommands
 
 
