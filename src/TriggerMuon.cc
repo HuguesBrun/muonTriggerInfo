@@ -12,6 +12,7 @@ TriggerMuon::TriggerMuon(const edm::ParameterSet& iConfig)
     triggerResultsLabel_    = iConfig.getParameter<edm::InputTag>("TriggerResults");
     triggerSummaryLabel_    = iConfig.getParameter<edm::InputTag>("HLTTriggerSummaryAOD");
     muonProducers_			= iConfig.getParameter<vtag>("muonProducer");
+    primaryVertexInputTag_  = iConfig.getParameter<edm::InputTag>("primaryVertexInputTag");
     
     outputFile_   = iConfig.getParameter<std::string>("outputFile");
     rootFile_ = TFile::Open(outputFile_.c_str(),"RECREATE");
@@ -57,6 +58,7 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
     using namespace edm;
     using namespace std;
+    using namespace reco;
 
 
     beginEvent();
@@ -80,10 +82,27 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (doPFPATmatching_) iEvent.getByLabel( "selectedPatMuonsPFlow", patMuons );
     
     Handle<reco::PFCandidateCollection> hPfCandProduct;
-    //iEvent.getByLabel("particleFlow", hPfCandProduct);
-    iEvent.getByLabel("pfAllMuonsPFlow", hPfCandProduct);
+    iEvent.getByLabel("particleFlow", hPfCandProduct);
+    //iEvent.getByLabel("pfAllMuonsPFlow", hPfCandProduct);
     const reco::PFCandidateCollection &inPfCands = *(hPfCandProduct.product());
+    
+    edm::Handle<reco::VertexCollection> vtx_h;
+    iEvent.getByLabel(primaryVertexInputTag_, vtx_h);
+    const reco::VertexCollection& vtxs = *(vtx_h.product());
 
+    reco::Vertex dummy;
+    const reco::Vertex *pv = &dummy;
+    T_Event_NbVtx = vtx_h->size();
+    if (vtx_h->size() != 0) {
+        pv = &*vtx_h->begin();
+    } else { // create a dummy PV
+        Vertex::Error e;
+        e(0, 0) = 0.0015 * 0.0015;
+        e(1, 1) = 0.0015 * 0.0015;
+        e(2, 2) = 15. * 15.;
+        Vertex::Point p(0, 0, 0);
+        dummy = Vertex(p, e, 0, 0, 0);
+    }
     
     if (isMC_){// get the gen infos
         edm::Handle<GenEventInfoProduct> genEvent;
@@ -199,11 +218,15 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
             }
         }
-        if ((bestMatching==-1)&&(muon->isPFMuon()&&(muon->pt()>10))){
+        if (muon->isPFMuon()) T_Muon_PtFromPAT->push_back(muon->pfP4().pt());
+        else T_Muon_PtFromPAT->push_back(-1);
+        /*if ((bestMatching==-1)&&(muon->isPFMuon()&&(muon->pt()>10))){
             cout << "event=" << T_Event_EventNumber << endl;
             cout << "muon:  pt=" << muon->pt() << " eta=" << muon->eta() << endl;
+            cout << "PF pt=" << muon->pfP4().pt() << endl;
+            
             cout << "Coucou ! le muon il est pas matché" << endl;
-        }
+        }*/
         if ((bestMatching>=0)&&minDr<0.1){
             T_Muon_isMatchWithPAT->push_back(1);
             T_Muon_PATpt->push_back(patMuons->at( bestMatching ).pt());
@@ -213,6 +236,26 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             T_Muon_PATpx->push_back(patMuons->at( bestMatching ).px());
             T_Muon_PATpy->push_back(patMuons->at( bestMatching ).py());
             T_Muon_PATpz->push_back(patMuons->at( bestMatching ).pz());
+            
+            if (patMuons->at( bestMatching ).track().isNonnull()){
+                const reco::Track *tk =patMuons->at( bestMatching ).track().get();
+                double d0 =  fabs(tk->dxy(pv->position()));
+                double dz =  fabs(tk->dz(pv->position()));
+                double d0e = hypot(tk->dxyError(), hypot(pv->xError(), pv->yError()));
+                double dze = hypot(tk->dzError(),  pv->zError());
+                T_Muon_PATd0->push_back(d0);
+                T_Muon_PATdz->push_back(dz);
+                T_Muon_PATd0e->push_back(d0e);
+                T_Muon_PATdze->push_back(dze);
+              //  cout << "PAT muon=" << endl;
+               // cout << "d0=" << d0 << " dZ=" << dz << " d0e=" << d0e << " dze=" << dze << endl;
+            }
+            else {
+                T_Muon_PATd0->push_back(-1);
+                T_Muon_PATdz->push_back(-1);
+                T_Muon_PATd0e->push_back(-1);
+                T_Muon_PATdze->push_back(-1);
+            }
         }
         else {
             T_Muon_isMatchWithPAT->push_back(0);
@@ -223,6 +266,10 @@ TriggerMuon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             T_Muon_PATpx->push_back(-1);
             T_Muon_PATpy->push_back(-1);
             T_Muon_PATpz->push_back(-1);
+            T_Muon_PATd0->push_back(-1);
+            T_Muon_PATdz->push_back(-1);
+            T_Muon_PATd0e->push_back(-1);
+            T_Muon_PATdze->push_back(-1);
         }
 
     	/*cout << "PF part = " << endl;
@@ -291,6 +338,7 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Event_RunNumber", &T_Event_RunNumber, "T_Event_RunNumber/I");
     mytree_->Branch("T_Event_EventNumber", &T_Event_EventNumber, "T_Event_EventNumber/I");
     mytree_->Branch("T_Event_LuminosityBlock", &T_Event_LuminosityBlock, "T_Event_LuminosityBlock/I");
+    mytree_->Branch("T_Event_NbVtx", &T_Event_NbVtx, "T_Event_NbVtx/I");
     
     mytree_->Branch("T_Event_HLT_Mu17_Mu8",&T_Event_HLT_Mu17_Mu8,"T_Event_HLT_Mu17_Mu8/I");
     mytree_->Branch("T_Event_HLT_Mu17_TkMu8",&T_Event_HLT_Mu17_TkMu8,"T_Event_HLT_Mu17_TkMu8/I");
@@ -327,6 +375,7 @@ TriggerMuon::beginJob()
     mytree_->Branch("T_Muon_Py", "std::vector<float>", &T_Muon_Py);
     mytree_->Branch("T_Muon_Pz", "std::vector<float>", &T_Muon_Pz);
     mytree_->Branch("T_Muon_Mass", "std::vector<float>", &T_Muon_Mass);
+    mytree_->Branch("T_Muon_PtFromPAT", "std::vector<float>", &T_Muon_PtFromPAT);
     mytree_->Branch("T_Muon_IsGlobalMuon", "std::vector<bool>", &T_Muon_IsGlobalMuon);
     mytree_->Branch("T_Muon_IsTrackerMuon", "std::vector<bool>", &T_Muon_IsTrackerMuon);
     mytree_->Branch("T_Muon_IsPFMuon", "std::vector<bool>", &T_Muon_IsPFMuon);
@@ -348,6 +397,10 @@ TriggerMuon::beginJob()
         mytree_->Branch("T_Muon_PATpx", "std::vector<float>", &T_Muon_PATpx);
         mytree_->Branch("T_Muon_PATpy", "std::vector<float>", &T_Muon_PATpy);
         mytree_->Branch("T_Muon_PATpz", "std::vector<float>", &T_Muon_PATpz);
+        mytree_->Branch("T_Muon_PATd0", "std::vector<float>", &T_Muon_PATd0);
+        mytree_->Branch("T_Muon_PATdz", "std::vector<float>", &T_Muon_PATdz);
+        mytree_->Branch("T_Muon_PATd0e", "std::vector<float>", &T_Muon_PATd0e);
+        mytree_->Branch("T_Muon_PATdze", "std::vector<float>", &T_Muon_PATdze);
     }
 
     
@@ -442,6 +495,11 @@ TriggerMuon::beginEvent()
     T_Muon_PATpx = new std::vector<float>;
     T_Muon_PATpy = new std::vector<float>;
     T_Muon_PATpz = new std::vector<float>;
+    T_Muon_PATd0 = new std::vector<float>;
+    T_Muon_PATdz = new std::vector<float>;
+    T_Muon_PATd0e = new std::vector<float>;
+    T_Muon_PATdze = new std::vector<float>;
+    T_Muon_PtFromPAT = new std::vector<float>;
 
     
     
@@ -500,6 +558,11 @@ TriggerMuon::endEvent()
     delete T_Muon_PATpx;
     delete T_Muon_PATpy;
     delete T_Muon_PATpz;
+    delete T_Muon_PATd0;
+    delete T_Muon_PATdz;
+    delete T_Muon_PATd0e;
+    delete T_Muon_PATdze;
+    delete T_Muon_PtFromPAT;
 
     
     

@@ -49,6 +49,9 @@
 
 #include "DataFormats/PatCandidates/interface/Muon.h"
 
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+
 // ROOT stuff !
 #include "TH1D.h"
 #include <map>
@@ -99,6 +102,7 @@ class TriggerMuon : public edm::EDAnalyzer {
 
     edm::InputTag               triggerResultsLabel_;
     edm::InputTag               triggerSummaryLabel_;
+    edm::InputTag               primaryVertexInputTag_;
     
     std::string outputFile_; // output file
     
@@ -116,6 +120,8 @@ class TriggerMuon : public edm::EDAnalyzer {
     int T_Event_RunNumber;
     int T_Event_EventNumber;
     int T_Event_LuminosityBlock;
+    
+    int T_Event_NbVtx;
     
     int T_Event_HLT_Mu17_Mu8;
     int T_Event_HLT_Mu17_TkMu8;
@@ -163,6 +169,8 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<bool> *T_Muon_IsPFMuon;
     std::vector<bool> *T_Muon_IsCaloMuon;
     
+    std::vector<float> *T_Muon_PtFromPAT;
+    
     // muon matched with trigger object :
     std::vector<bool> *T_Muon_HLT_Mu17_Mu8_Mu17Leg;
     std::vector<bool> *T_Muon_HLT_Mu17_Mu8_Mu8Leg;
@@ -178,6 +186,10 @@ class TriggerMuon : public edm::EDAnalyzer {
     std::vector<float>*T_Muon_PATpx;
     std::vector<float>*T_Muon_PATpy;
     std::vector<float>*T_Muon_PATpz;
+    std::vector<float>*T_Muon_PATd0;
+    std::vector<float>*T_Muon_PATdz;
+    std::vector<float>*T_Muon_PATd0e;
+    std::vector<float>*T_Muon_PATdze;
 
     
     

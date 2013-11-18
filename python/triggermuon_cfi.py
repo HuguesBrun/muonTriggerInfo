@@ -26,7 +26,7 @@ if savePatInTree: usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=Tru
 
 
 process.GlobalTag.globaltag = 'START53_V7A::All'
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 #
@@ -38,7 +38,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.source = cms.Source(
                             "PoolSource",
                             fileNames = cms.untracked.vstring(
-                                'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root',
+                                                              #      'file:skimedFile/pickevents.root'
+                                                              'file:/sps/cms/hbrun/CMSSW_5_3_10_forNewSims/src/files/runDepMC/MCDY_runDep_1.root'
                                                              ),
                             secondaryFileNames = cms.untracked.vstring(),
                             noEventSort = cms.untracked.bool(True),
@@ -53,6 +54,7 @@ process.triggerMuon = cms.EDAnalyzer('TriggerMuon',
                                      muonProducer 		= cms.VInputTag(cms.InputTag("muons")),
                                      TriggerResults          = cms.InputTag("TriggerResults", "", "HLT"),
                                      HLTTriggerSummaryAOD    = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),
+                                     primaryVertexInputTag = cms.InputTag("goodOfflinePrimaryVertices"),
                                      outputFile		        = cms.string("muonTriggerTree.root"),
 )
 
@@ -67,6 +69,16 @@ process.noScraping = cms.EDFilter("FilterOutScraping",
                                   numtrack = cms.untracked.uint32(10),
                                   thresh = cms.untracked.double(0.25)
                                   )
+
+process.goodOfflinePrimaryVertices = cms.EDFilter("PrimaryVertexObjectFilter",
+                                                  filter = cms.bool(False),
+                                                  src = cms.InputTag("offlinePrimaryVertices"),
+                                                  filterParams = cms.PSet(
+                                                                          maxZ = cms.double(24.0),
+                                                                          minNdof = cms.double(4.0),
+                                                                          maxRho = cms.double(2.0)
+                                                                          )
+                                                  )
 
 
 process.load("HLTrigger.HLTfilters.triggerResultsFilter_cfi")
@@ -110,7 +122,7 @@ adaptPFIsoMuons(process,process.pfIsolatedMuonsPFlow,"PFlow", "03")
 
 if savePatInTree:
     #sequence with PF
-    process.p = cms.Path(process.goodVertexFilter * process.noScraping * getattr(process,"patPF2PATSequence"+postfix)*process.triggerMuon)
+    process.p = cms.Path(process.goodVertexFilter * process.noScraping * process.goodOfflinePrimaryVertices * getattr(process,"patPF2PATSequence"+postfix)*process.triggerMuon)
 else:
     #sequence without PF
     process.p = cms.Path(process.goodVertexFilter * process.noScraping * process.triggerMuon)
